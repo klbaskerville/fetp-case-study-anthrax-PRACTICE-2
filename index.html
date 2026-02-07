@@ -1,0 +1,1962 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FETP Frontline 3.0 — Anthrax in the Cattle-Keeping Corridor of Uganda (Interactive Case Study)</title>
+
+  <!-- Chart.js for epi curve -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#101b33;
+      --panel2:#0f1730;
+      --text:#e8eefc;
+      --muted:#b6c3e6;
+      --accent:#7dd3fc;
+      --accent2:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
+      --line:rgba(255,255,255,.12);
+      --shadow: 0 10px 25px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(125,211,252,.16), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(52,211,153,.13), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(11,18,32,.92), rgba(11,18,32,.65));
+      border-bottom:1px solid var(--line);
+    }
+    .wrap{max-width:1150px; margin:0 auto; padding:18px 18px 36px;}
+    .topbar{
+      display:flex; gap:16px; align-items:center; justify-content:space-between;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .brand h1{font-size:16px; margin:0; letter-spacing:.2px}
+    .brand .sub{font-size:12px; color:var(--muted)}
+    .progress{
+      display:flex; gap:10px; align-items:center; min-width:280px; justify-content:flex-end;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border:1px solid var(--line); border-radius:999px;
+      background: rgba(16,27,51,.55);
+      box-shadow: 0 4px 12px rgba(0,0,0,.18);
+      font-size:12px; color:var(--muted);
+      user-select:none;
+    }
+    .pill strong{color:var(--text)}
+    .btn{
+      cursor:pointer;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      background: rgba(16,27,51,.7);
+      color: var(--text);
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
+      transition: transform .05s ease, border-color .2s ease;
+      font-size:13px;
+    }
+    .btn:active{transform: translateY(1px);}
+    .btn:hover{border-color: rgba(125,211,252,.55);}
+    .btn.primary{border-color: rgba(125,211,252,.45); background: rgba(125,211,252,.12);}
+    .btn.good{border-color: rgba(52,211,153,.45); background: rgba(52,211,153,.10);}
+    .btn.warn{border-color: rgba(251,191,36,.45); background: rgba(251,191,36,.10);}
+    .btn.danger{border-color: rgba(251,113,133,.45); background: rgba(251,113,133,.10);}
+
+    nav{
+      margin-top:14px;
+      display:flex; flex-wrap:wrap; gap:10px;
+    }
+    nav a{
+      text-decoration:none;
+      color: var(--muted);
+      border:1px solid var(--line);
+      background: rgba(16,27,51,.35);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      transition: border-color .2s ease, color .2s ease;
+    }
+    nav a:hover{border-color: rgba(125,211,252,.55); color: var(--text);}
+    nav a.active{border-color: rgba(125,211,252,.55); color: var(--text); background: rgba(125,211,252,.10);}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 330px 1fr;
+      gap:18px;
+      margin-top:18px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr;}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(16,27,51,.78), rgba(15,23,48,.72));
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    }
+    .card .hd h2{
+      margin:0; font-size:14px; letter-spacing:.2px;
+    }
+    .card .hd .tag{
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:6px 10px;
+      background: rgba(0,0,0,.10);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .card .bd{padding:14px;}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .kpi{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kpi .box{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      border-radius:14px;
+      padding:10px;
+    }
+    .kpi .box .n{font-size:18px; font-weight:700}
+    .kpi .box .l{font-size:12px; color:var(--muted)}
+    .callout{
+      border:1px solid rgba(125,211,252,.35);
+      background: rgba(125,211,252,.08);
+      border-radius:14px;
+      padding:12px;
+      margin:12px 0;
+    }
+    .callout.warn{
+      border-color: rgba(251,191,36,.35);
+      background: rgba(251,191,36,.08);
+    }
+    .callout.good{
+      border-color: rgba(52,211,153,.35);
+      background: rgba(52,211,153,.08);
+    }
+    .callout.danger{
+      border-color: rgba(251,113,133,.35);
+      background: rgba(251,113,133,.08);
+    }
+
+    .section{
+      display:none;
+      animation: fadeIn .22s ease;
+    }
+    .section.active{display:block;}
+    @keyframes fadeIn{
+      from{opacity:.0; transform: translateY(4px);}
+      to{opacity:1; transform: translateY(0);}
+    }
+
+    .q{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background: rgba(0,0,0,.10);
+      margin:12px 0;
+    }
+    .q .row{
+      display:flex; gap:12px; justify-content:space-between; align-items:flex-start; flex-wrap:wrap;
+    }
+    .q .qid{
+      font-family: var(--mono);
+      font-size:12px;
+      color: var(--muted);
+      user-select:none;
+    }
+    .q .prompt{margin:6px 0 10px; line-height:1.35}
+    textarea, input, select{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: rgba(16,27,51,.55);
+      color: var(--text);
+      padding:10px 10px;
+      outline:none;
+      font-family: var(--sans);
+      font-size:13px;
+    }
+    textarea{min-height:90px; resize:vertical;}
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+    }
+    .hidden{display:none}
+    .answer{
+      margin-top:10px;
+      border-left:3px solid rgba(52,211,153,.5);
+      padding:10px 10px 10px 12px;
+      background: rgba(52,211,153,.08);
+      border-radius:12px;
+    }
+    .hint{
+      margin-top:10px;
+      border-left:3px solid rgba(251,191,36,.55);
+      padding:10px 10px 10px 12px;
+      background: rgba(251,191,36,.08);
+      border-radius:12px;
+    }
+    .scoreline{
+      margin-top:8px;
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(0,0,0,.10);
+    }
+    th, td{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      border-right:1px solid var(--line);
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; background: rgba(16,27,51,.35);}
+    tr:last-child td{border-bottom:none}
+    th:last-child, td:last-child{border-right:none}
+    .mono{font-family: var(--mono)}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background: rgba(16,27,51,.45);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      color: var(--muted);
+      margin:4px 6px 0 0;
+    }
+    .hr{height:1px; background: var(--line); margin:14px 0;}
+
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .two{grid-template-columns:1fr}
+    }
+
+    .toast{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      max-width:360px;
+      background: rgba(16,27,51,.92);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      box-shadow: var(--shadow);
+      display:none;
+      z-index:999;
+    }
+    .toast.show{display:block; animation: fadeIn .18s ease;}
+    .toast .t{font-weight:700; font-size:13px; margin:0 0 4px;}
+    .toast .m{font-size:12px; color:var(--muted); margin:0;}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <h1>Anthrax in the Cattle-Keeping Corridor of Uganda — One Health Case Study</h1>
+        <div class="sub">Interactive trainee module (FETP Frontline-style) • Workshop 2 • Participant-facing</div>
+      </div>
+      <div class="progress">
+        <div class="pill"><span>Section</span> <strong id="secName">Intro</strong></div>
+        <div class="pill"><span>Completion</span> <strong id="pct">0%</strong></div>
+        <button class="btn primary" id="btnNext">Next ▸</button>
+      </div>
+    </div>
+
+    <nav id="nav"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+    <!-- Left: dashboard -->
+    <aside class="card">
+      <div class="hd">
+        <h2>Dashboard</h2>
+        <div class="tag" id="modeTag">Trainee Mode</div>
+      </div>
+      <div class="bd">
+        <div class="kpi">
+          <div class="box">
+            <div class="n" id="kpiAnswered">0</div>
+            <div class="l">Activities completed</div>
+          </div>
+          <div class="box">
+            <div class="n" id="kpiTotal">0</div>
+            <div class="l">Total activities</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div style="font-weight:700; margin-bottom:6px;">How to use this module</div>
+          <div class="small muted">
+            Work through sections in order. For each question, enter your response and use <b>Check</b> to compare
+            against model guidance. Use <b>Hint</b> if needed; switch to <b>Facilitator Mode</b> to reveal all model answers.
+          </div>
+        </div>
+
+        <div class="callout good">
+          <div style="font-weight:700; margin-bottom:6px;">Learning objectives</div>
+          <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.35;">
+            <li>Outbreak investigation steps & how they differ for zoonoses</li>
+            <li>Define One Health and its relevance to zoonotic outbreaks</li>
+            <li>Identify multidisciplinary team members & roles</li>
+            <li>Calculate attack rates to identify exposures</li>
+            <li>Joint human–animal control strategies</li>
+            <li>Challenges to multisectoral coordination</li>
+          </ul>
+        </div>
+
+        <div class="hr"></div>
+
+        <button class="btn good" id="btnToggleMode">Switch to Facilitator Mode</button>
+        <button class="btn warn" id="btnReset">Reset progress</button>
+
+        <div class="hr"></div>
+
+        <div class="small muted">
+          <div style="font-weight:700; margin-bottom:6px;">Source</div>
+          <div>
+            Built from the attached FETP Frontline 3.0 case study “Anthrax in the Cattle-Keeping Corridor of Uganda:
+            A One Health Case Study” (Participant Guide).
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right: content -->
+    <section class="card">
+      <div class="hd">
+        <h2 id="sectionTitle">Intro</h2>
+        <div class="tag" id="sectionTag">Overview</div>
+      </div>
+      <div class="bd">
+
+        <!-- Sections injected here -->
+        <div id="sections"></div>
+
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="toast" id="toast">
+  <p class="t" id="toastTitle">Saved</p>
+  <p class="m" id="toastMsg">Your response was saved.</p>
+</div>
+
+<script>
+/**
+ * Interactive module content + activities.
+ * This single file covers:
+ * - Background + setting narrative
+ * - Questions 1–19 prompts aligned to the guide
+ * - Outbreak investigation steps (incl missing step)
+ * - Human/cattle case definitions
+ * - Timeline (Table 2 fill-in)
+ * - Epi curve recreation + interpretation activities
+ * - Attack rate calculations: sex, age group, and exposure table
+ * - Appendices: One Health overview + anthrax fact sheet
+ * - Appendix 3 line list data used for computations
+ */
+
+const STORAGE_KEY = "fetp_anthrax_case_study_progress_v1";
+
+const DATA = {
+  meta: {
+    title: "Anthrax in the Cattle-Keeping Corridor of Uganda",
+    subtitle: "A One Health Case Study (FETP Frontline 3.0 — Workshop 2)",
+    contextDates: ["2018-04-20","2018-04-21","2018-04-22","2018-04-23","2018-04-29","2018-04-30"],
+  },
+
+  // Narrative (condensed for display; still preserves all major facts)
+  narrative: {
+    background: [
+      {
+        dateLabel: "20 April 2018",
+        text: "Seven people presented to a health centre in Kween District, Uganda with swollen skin blisters and lesions with black tissue in the centre. Six were males aged 14–62; one was a 3-year-old female. All seven had been involved in skinning, butchering, carrying, or eating a cow that died suddenly on 11 April in Kaplobotwo village (subcounty Ngenge)."
+      },
+      {
+        dateLabel: "Setting",
+        text: "Kaplobotwo is in mountainous Kween District, part of Uganda’s cattle-keeping corridor, bordering Kenya. Road access is limited in some areas. ~85% of households depend on subsistence farming; >80% raise livestock (cattle, goats common; also sheep, pigs, poultry). Of ~100,000 people in Kween, >50% are <18 years; ~1/3 are illiterate; <2% own a TV; ~50% own a radio (main information source). Kaplobotwo had 234 residents: 127 males; 138 <18 years."
+      },
+      {
+        dateLabel: "Field investigation (21 April)",
+        text: "The District Health Officer convened the District Rapid Response Team (RRT), including a FETP fellow. The RRT included the fellow, a health promotion officer, a laboratory technician, the district veterinary officer, two environmental health officers, and the District Administrator. The team met the village leader: the cow died suddenly and was butchered soon after; 15 residents butchered and carried meat; others ate; some meat was sold to neighbouring villages."
+      },
+      {
+        dateLabel: "Diagnosis & early actions",
+        text: "Clinician suspected anthrax based on characteristic lesions, exposure to suddenly-dead cow, and prior outbreaks. Skin lesion specimens from seven patients were collected (with consent) and sent to the National Reference Laboratory for urgent PCR."
+      }
+    ],
+
+    outbreakSteps: [
+      "Identify your team / prepare for field work",
+      "Establish the existence of an outbreak",
+      "Verify the diagnosis",
+      "Construct a working case definition",
+      "Find cases and develop line listing",
+      "Perform descriptive epidemiology",
+      "Develop hypotheses",
+      "Evaluate hypotheses through analytical studies",
+      "As necessary, reconsider, refine and re-evaluate hypotheses",
+      "Compare and reconcile with laboratory and/or environmental studies",
+      "Implement control and prevention measures (as early as possible)",
+      "Initiate or maintain surveillance",
+      "Communicate findings"
+    ],
+
+    humanCaseDefinition: {
+      clinical: {
+        cutaneousSuspected: "Onset of itching, reddening or swelling of skin areas and any of: skin lesions (papule/vesicle/eschar) or lymphadenopathy.",
+        giSuspected: "Onset of abdominal pain and any of: diarrhea, vomiting, lymphadenopathy, pharyngitis, or oropharyngeal lesions.",
+        confirmed: "A suspected case with PCR-positivity for Bacillus anthracis from a clinical sample (swab from skin lesions/vesicles and/or blood)."
+      },
+      time: "Onset from 6 April onwards",
+      placePerson: "Person residing in Kaplobotwo village, Kween District"
+    },
+
+    cattleCaseDefinition: {
+      suspected: "Sudden death, or death within 24 hours of illness onset, with or without blood-stained discharges from external orifices, in cattle in Kaplobotwo from 6 April onwards.",
+      confirmed: "A suspected cattle case with Bacillus anthracis identified (blood/oedematous fluid/exudate) by culture, PCR, or microscopic exam of blood smears."
+    },
+
+    timelineKeyFacts: [
+      { date: "11 April", fact: "Cow dies suddenly; butchered and eaten in Kaplobotwo" },
+      { date: "20 April", fact: "Seven people present sick to Ngenge III health centre; clinician calls district health officer" },
+      { date: "21 April", fact: "RRT starts field investigation; learns exposures to dead cow; anthrax suspected" },
+      { date: "22 April", fact: "Another cow dies suddenly in same area; blood sample sent for PCR; carcass buried; site decontaminated; CHW training arranged in neighbouring villages; environmental transmission routes discussed" },
+      { date: "23–29 April", fact: "Seven additional cows found dead near pasture/stream/bushes; another cow found dead on 29 April; samples collected; carcasses managed; interviews with livestock owners; positive cattle lab results reported to RRT and Ministry of Agriculture, Animal Industry and Fisheries" },
+      { date: "30 April", fact: "26 suspected human cases identified and interviewed; all had symptom onset after contact with 11 April cow; contact included skinning/butchering/carrying/eating; only 10 sought care; low care-seeking possibly related to Marburg outbreak fears (stigma, quarantine, disinfectant spraying, dying at health centre)" }
+    ],
+
+    // Part B data points
+    partB: {
+      cohort: {
+        householdsVisited: 57,
+        respondents: 141,
+        villageResidents: 234,
+        nonresponseReasons: "Absence (boarding school; travel for trade, cattle rearing, farming).",
+        additionalCasesIdentified: 22,
+        totalCasesKaplobotwo: 48,
+        suspected: 45,
+        confirmed: 3
+      },
+      clinicalDistribution: [
+        { type: "Cutaneous only", n: 14, pct: 29 },
+        { type: "Gastrointestinal only", n: 14, pct: 29 },
+        { type: "Cutaneous and gastrointestinal", n: 20, pct: 42 },
+        { type: "Total cases", n: 48, pct: 100 },
+      ],
+      cookingFinding: {
+        villages: [
+          { village:"Tukumo", detail:"~23 ate cooked meat in a bar; no illnesses reported." },
+          { village:"Rikwo", detail:"28 ate cooked meat in a bar; none sick; two who bought directly and ate roasted became sick." }
+        ],
+        note: "Bar owners boiled meat for a long time (may reduce risk). Roasting may be insufficient because spores resist dry heat.",
+        rrProtective: "Boiling >60 minutes was protective (RR=0.49 vs boiling <60 minutes)."
+      },
+      animalContext: {
+        suspectedSinceJan: 150,
+        note: "Over 150 suspected anthrax animal cases occurred since 1 Jan 2018 in Ngenge. None of interviewed owners vaccinated animals; vaccines not subsidized, considered too expensive; group/extended family ownership complicated payment decisions."
+      }
+    },
+
+    partCFindings: [
+      "Human cases started 13 April 2018; from Kaplobotwo (Kween district).",
+      "26 human cases identified via index cases/active case finding; +22 via cohort study.",
+      "Most likely cause anthrax: signs/symptoms in humans and cattle, association with cattle, and lab findings.",
+      "First suspected cattle case (linked to index) occurred 11 April; 10 cattle suspected/confirmed died in Kaplobotwo during investigation period.",
+      "Retrospective investigation: >150 suspected cattle anthrax cases from 1 Jan–30 Apr in Ngenge.",
+      "Livestock not routinely vaccinated."
+    ],
+
+    conclusion: "A One Health approach improves response effectiveness. In this outbreak, all human cases were linked to exposure to a single cow death. Education and carcass management after the index death may have helped prevent further human cases linked to subsequent cattle deaths. Vaccination of susceptible animals likely helped prevent cattle cases. The team decided to form a Kween District One Health taskforce to improve information sharing for prevention, detection, and response."
+  },
+
+  appendix: {
+    oneHealth: {
+      definition: "One Health recognizes the close relationship between people, animals, and the environment; poor health in one can affect the others. CDC defines One Health as a collaborative, multisectoral, transdisciplinary approach at all levels to achieve optimal health outcomes recognizing interconnections between people, animals, plants, and shared environment.",
+      relevance: [
+        "Important for prevention, investigation, and control of zoonotic diseases.",
+        "Early detection in animals can prevent transmission to humans (including via food chain).",
+        "For some zoonoses, controlling infection in animals is most effective for preventing human disease (e.g., anthrax, brucellosis, rabies, zoonotic influenza A).",
+        "Approx. 60% of infectious diseases in humans are zoonotic; ~70% of emerging infectious diseases are zoonotic (supporting One Health relevance).",
+        "Requires coordination across disciplines and agencies at multiple levels."
+      ],
+      professions: [
+        "Public health epidemiologists",
+        "Veterinary epidemiologists",
+        "Clinicians, pathologists, nurses, community health workers",
+        "Veterinarians, animal health workers, quarantine officers",
+        "Laboratory technicians",
+        "Environmental scientists, ecologists, wildlife biologists",
+        "Plus enabling roles: politicians (policy/legislation/compensation), economists (economic evaluation), sociologists (behavior/social drivers), security personnel (support measures)"
+      ]
+    },
+
+    anthraxFacts: {
+      overview: [
+        "Anthrax is caused by Bacillus anthracis; spores persist in soil in some areas.",
+        "Outbreaks occur sporadically in domestic/wild animals and humans; human outbreaks typically associated with animal outbreaks.",
+        "Anthrax is not meaningfully contagious between live animals or humans.",
+        "Herbivores often infected by ingesting soil-borne spores while grazing, especially where carcasses are mismanaged or after soil disturbance (flooding, ploughing, excavation).",
+        "Omnivores/carnivores can acquire infection by eating infected animals; humans by handling infected animals/products.",
+        "Vegetative bacteria are fragile, but exposure to air forms resistant spores viable for years. Carcass management is critical.",
+        "Spores/vegetative bacteria destroyed by moist heat at 100–105°C for 20 minutes."
+      ],
+      animals: [
+        "In livestock, anthrax generally causes sudden death in cattle, sheep, goats, camelids; blood may be at nose/mouth/anus; high septicaemia -> environmental contamination risk.",
+        "Carcass management: isolate, do not open carcass, decontaminate death site, incinerate or deep bury.",
+        "Pigs have some natural resistance; may recover; can show bloody feces, nasal hemorrhage, respiratory distress or mild fever/lymph nodes/swelling.",
+        "No carrier state in animals (except possibly recovered pigs; role uncertain). Spread mainly via movement of live animals incubating infection; death releases bacteria at new site."
+      ],
+      humans: [
+        "Cutaneous: spores enter skin breaks; usually from handling contaminated animal products/meat; incubation typically 1–7 days; blisters/itching/swelling -> painless sore with black eschar; may not seek care due to lack of pain.",
+        "Gastrointestinal: from eating raw/undercooked meat; incubation 3–7 days; fever, neck gland swelling, sore throat, headache, nausea/vomiting (may be bloody), diarrhea (may be bloody), abdominal swelling, fainting.",
+        "Inhalational: inhaling spores (e.g., processing hides/wool); incubation 1–7 days; fever, fatigue, aches, GI symptoms, chest discomfort, cough, dyspnea.",
+        "Other rare forms: meningeal (secondary), injection anthrax."
+      ]
+    }
+  },
+
+  // Appendix 3 line list (human cases), used for calculations
+  lineList: [
+    {caseNo:10, sex:"F", age:1,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:91, sex:"F", age:1,  cat:"Cutan-Only", onset:"2018-04-20", lab:0, result:""},
+    {caseNo:125,sex:"M", age:2,  cat:"GI-Only", onset:"2018-04-16", lab:0, result:""},
+    {caseNo:23, sex:"F", age:3,  cat:"Cutan-GI", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:57, sex:"M", age:3,  cat:"Cutan-GI", onset:"2018-04-17", lab:0, result:""},
+    {caseNo:94, sex:"M", age:3,  cat:"GI-Only", onset:"2018-04-19", lab:0, result:""},
+    {caseNo:74, sex:"M", age:3,  cat:"GI-Only", onset:"2018-04-13", lab:0, result:""},
+    {caseNo:11, sex:"M", age:4,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:73, sex:"M", age:4,  cat:"GI-Only", onset:"2018-04-13", lab:0, result:""},
+    {caseNo:123,sex:"M", age:5,  cat:"Cutan-GI", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:58, sex:"M", age:5,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:34, sex:"M", age:5,  cat:"GI-Only", onset:"2018-04-13", lab:0, result:""},
+    {caseNo:12, sex:"M", age:6,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:59, sex:"M", age:7,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:8,  sex:"M", age:8,  cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:121,sex:"M", age:11, cat:"GI-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:82, sex:"M", age:14, cat:"Cutan-Only", onset:"2018-04-14", lab:1, result:""},
+    {caseNo:87, sex:"M", age:16, cat:"Cutan-GI", onset:"2018-04-13", lab:1, result:""},
+    {caseNo:122,sex:"F", age:21, cat:"GI-Only", onset:"2018-04-14", lab:1, result:""},
+    {caseNo:13, sex:"F", age:22, cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:103,sex:"M", age:25, cat:"Cutan-GI", onset:"2018-04-14", lab:1, result:""},
+    {caseNo:60, sex:"F", age:26, cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:70, sex:"F", age:26, cat:"Cutan-Only", onset:"2018-04-18", lab:0, result:""},
+    {caseNo:56, sex:"F", age:27, cat:"Cutan-Only", onset:"2018-04-17", lab:0, result:""},
+    {caseNo:72, sex:"F", age:28, cat:"Cutan-Only", onset:"2018-04-16", lab:0, result:""},
+    {caseNo:9,  sex:"M", age:30, cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:71, sex:"M", age:30, cat:"GI-Only", onset:"2018-04-13", lab:0, result:""},
+    {caseNo:96, sex:"M", age:34, cat:"Cutan-Only", onset:"2018-04-17", lab:0, result:""},
+    {caseNo:15, sex:"M", age:35, cat:"Cutan-GI", onset:"2018-04-15", lab:1, result:"Positive"},
+    {caseNo:98, sex:"M", age:35, cat:"GI-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:97, sex:"M", age:38, cat:"Cutan-GI", onset:"2018-04-13", lab:1, result:"Positive"},
+    {caseNo:55, sex:"M", age:44, cat:"Cutan-GI", onset:"2018-04-25", lab:1, result:"Positive"},
+    {caseNo:64, sex:"M", age:45, cat:"Cutan-GI", onset:"2018-04-18", lab:0, result:""},
+    {caseNo:33, sex:"F", age:45, cat:"Cutan-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:93, sex:"M", age:47, cat:"Cutan-Only", onset:"2018-04-13", lab:1, result:""},
+    {caseNo:31, sex:"F", age:48, cat:"Cutan-Only", onset:"2018-04-17", lab:0, result:""},
+    {caseNo:92, sex:"M", age:53, cat:"Cutan-Only", onset:"2018-04-24", lab:1, result:""},
+    {caseNo:119,sex:"M", age:53, cat:"GI-Only", onset:"2018-04-16", lab:1, result:""},
+    {caseNo:26, sex:"F", age:55, cat:"Cutan-Only", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:99, sex:"M", age:57, cat:"GI-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:21, sex:"M", age:58, cat:"GI-Only", onset:"2018-04-18", lab:0, result:""},
+    {caseNo:105,sex:"F", age:60, cat:"Cutan-GI", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:76, sex:"M", age:61, cat:"Cutan-Only", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:1,  sex:"M", age:62, cat:"Cutan-GI", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:75, sex:"F", age:65, cat:"Cutan-Only", onset:"2018-04-14", lab:0, result:""},
+    {caseNo:104,sex:"M", age:65, cat:"Cutan-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:29, sex:"F", age:75, cat:"GI-Only", onset:"2018-04-15", lab:0, result:""},
+    {caseNo:30, sex:"M", age:84, cat:"GI-Only", onset:"2018-04-13", lab:0, result:""},
+  ],
+
+  // Population denominators from Table 4a/4b
+  denominators: {
+    bySex: { M:127, F:107 },
+    byAgeGroup: [
+      { label:"0–4",  min:0,  max:4,  pop:41 },
+      { label:"5–10", min:5,  max:10, pop:41 },
+      { label:"11–17",min:11, max:17,pop:56 },
+      { label:"18–34",min:18, max:34,pop:45 },
+      { label:"35–54",min:35, max:54,pop:39 },
+      { label:"≥55",  min:55, max:200,pop:12 },
+    ],
+    village: { residents:234, male:127, under18:138 }
+  },
+
+  // Exposure table for Question 15
+  exposuresQ15: [
+    { exposure:"Carried dead cow and/or butchered parts", case:21, noncase:19 },
+    { exposure:"Skinned cow", case:8, noncase:2 },
+    { exposure:"Carried skin from dead animal", case:7, noncase:1 },
+    { exposure:"Cut/butchered cow", case:9, noncase:1 },
+    { exposure:"Cleaned waste from butchering site", case:8, noncase:2 },
+    { exposure:"Removed internal organs from dead cow", case:7, noncase:3 },
+    { exposure:"Prepared meat for cooking", case:12, noncase:24 },
+  ],
+
+  // Epi curve values approximated from the figure (human cases + cattle deaths by day in April).
+  // The original chart shows daily counts from April 8–29. Here we encode a dataset consistent with the visual:
+  epiCurve: {
+    labels: ["08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29"],
+    human:   [0,0,0,0,0,8,9,17,3,4,3,1,1,1,7,0,0,1,1,0,0,0],
+    cattle:  [0,0,0,1,0,0,0,0,0,0,0,1,1,1,7,0,0,0,0,0,1,0]
+  }
+};
+
+// ---------- Utilities ----------
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+function toast(title, msg){
+  $("#toastTitle").textContent = title;
+  $("#toastMsg").textContent = msg;
+  const t = $("#toast");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2200);
+}
+
+function pct(n,d){ return d===0 ? 0 : Math.round((n/d)*100); }
+
+function fmtRate(num, den){
+  if(!den || den===0) return "—";
+  return ( (num/den)*100 ).toFixed(1) + "%";
+}
+
+function groupBy(arr, keyFn){
+  return arr.reduce((acc, x)=>{
+    const k = keyFn(x);
+    acc[k] = acc[k] || [];
+    acc[k].push(x);
+    return acc;
+  }, {});
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+function saveState(state){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function defaultState(){
+  return {
+    mode: "trainee", // or facilitator
+    currentSection: 0,
+    // activity completion + saved responses
+    done: {},
+    responses: {}
+  };
+}
+
+let STATE = loadState() || defaultState();
+
+// ---------- Computations for embedded activities ----------
+function computeAttackRatesBySex(){
+  const counts = groupBy(DATA.lineList, r=>r.sex);
+  const maleCases = (counts.M||[]).length;
+  const femaleCases = (counts.F||[]).length;
+  return {
+    M: { cases: maleCases, pop: DATA.denominators.bySex.M, ar: fmtRate(maleCases, DATA.denominators.bySex.M) },
+    F: { cases: femaleCases, pop: DATA.denominators.bySex.F, ar: fmtRate(femaleCases, DATA.denominators.bySex.F) },
+    total: { cases: DATA.lineList.length, pop: DATA.denominators.bySex.M + DATA.denominators.bySex.F, ar: fmtRate(DATA.lineList.length, DATA.denominators.bySex.M + DATA.denominators.bySex.F) }
+  };
+}
+
+function computeAttackRatesByAgeGroup(){
+  const out = DATA.denominators.byAgeGroup.map(g=>{
+    const n = DATA.lineList.filter(r=>r.age>=g.min && r.age<=g.max).length;
+    return { ...g, cases:n, ar: fmtRate(n, g.pop) };
+  });
+  const totalCases = DATA.lineList.length;
+  const totalPop = out.reduce((s,x)=>s+x.pop,0);
+  return { rows: out, total: { cases: totalCases, pop: totalPop, ar: fmtRate(totalCases, totalPop) } };
+}
+
+function computeExposureAttackRatesQ15(){
+  return DATA.exposuresQ15.map(x=>{
+    const total = x.case + x.noncase;
+    return { ...x, total, ar: fmtRate(x.case, total) };
+  });
+}
+
+// ---------- Activities / model guidance (facilitator answers are "model", not strict single answers) ----------
+const MODEL = {
+  Q1: {
+    hint: "Compare the number of cases to what is expected; consider clustering in time/place/person and shared exposure.",
+    model: [
+      "Yes—this is a suspected outbreak (cluster) because multiple people from one village present around the same time with similar, unusual clinical signs and a shared exposure to a cow that died suddenly.",
+      "Even if baseline is unknown, the clustering and severity warrant immediate investigation and control actions."
+    ]
+  },
+  Q2: {
+    hint: "This is a suspected zoonotic event involving livestock/meat exposure; list agencies and field roles across sectors.",
+    model: [
+      "Likely agencies: public health/district health office; animal health/veterinary services; agriculture/livestock ministry; laboratories; environmental health; local administration; possibly wildlife authorities if indicated.",
+      "Field team roles: epidemiologist/FETP fellow, clinician, lab technician, veterinary officer/animal health staff, environmental health officers, health promotion/risk communication, data officer, logisticians/administration, community health workers, and local leaders."
+    ]
+  },
+  Q3: {
+    hint: "Think: how did humans become exposed? how did the cow likely become infected in an endemic area?",
+    model: [
+      "a) Humans: exposure while skinning/butchering/carrying/eating meat from an infected cow (cutaneous via handling; GI via consuming undercooked meat).",
+      "b) Cow: ingestion of soil-borne anthrax spores while grazing in an area with environmental contamination/history of anthrax (possibly after disturbances/favorable soil conditions)."
+    ]
+  },
+  Q4: {
+    hint: "Between descriptive epi and analytic studies, what do investigators do?",
+    model: ["Step 7 is typically: Develop hypotheses (or generate hypotheses)."]
+  },
+  Q5: {
+    hint: "Which steps change when animals and environment are involved?",
+    model: [
+      "Team formation expands to animal health and environmental disciplines (One Health).",
+      "Case definitions and case finding extend to animals (and sometimes wildlife) and environmental assessments.",
+      "Hypotheses must consider animal-to-human exposure routes and environmental persistence.",
+      "Control measures include carcass management, animal vaccination, movement controls, and risk communication.",
+      "Coordination/communication must be multisectoral; lab workflows may include veterinary specimens."
+    ]
+  },
+  Q6: {
+    hint: "Outbreak case definitions are often more sensitive and specific to the event’s time/place/person.",
+    model: [
+      "Outbreak case definitions are tailored to the specific event: defined time period, geography, population, and often broadened to be sensitive early in the investigation.",
+      "Standard surveillance definitions are designed for ongoing, consistent reporting across time/places and may be less flexible."
+    ]
+  },
+  Q7: {
+    hint: "Active case finding includes facility, community, and records-based approaches.",
+    model: [
+      "Search health facility registers/triage logs; review clinical notes; alert clinicians.",
+      "Community outreach with CHWs; door-to-door case search; engage leaders; use radio announcements.",
+      "Contact tracing of exposed individuals (e.g., butchering/carrying/eating).",
+      "Search neighboring villages where meat was sold; investigate rumors."
+    ]
+  },
+  Q8: {
+    hint: "Think standardization + completeness + comparability + data quality.",
+    model: [
+      "Ensures consistent capture of symptoms, exposures, and demographics across cases.",
+      "Improves completeness and comparability for analysis and hypothesis testing.",
+      "Speeds up field interviewing and reduces missing key risk-factor information."
+    ]
+  },
+  Q9: {
+    hint: "What does animal data add for human epi, and vice versa?",
+    model: [
+      "Animal cases can identify source locations, timing, and exposure pathways (carcass sites, movement of animals/meat).",
+      "Human cases can signal undetected animal outbreaks and help prioritize animal investigations/interventions.",
+      "Joint data improves targeting of control measures (vaccination zones, education, carcass management)."
+    ]
+  },
+  Q10a: {
+    hint: "On 22 April: new cow death + actions taken.",
+    model: [
+      "Another cow died suddenly in the same area; blood sample sent for PCR; carcass buried; death site decontaminated; CHW training arranged in neighboring villages; environmental transmission routes discussed."
+    ]
+  },
+  Q10b: {
+    hint: "23–29 April: multiple cow deaths + lab confirmation + reporting.",
+    model: [
+      "Seven additional cows found dead (pasture/stream/bushes); another cow found dead on 29 April; samples collected and carcasses managed; livestock owner interviews; cattle labs positive for B. anthracis; reported to RRT and Ministry of Agriculture, Animal Industry and Fisheries."
+    ]
+  },
+  Q10c: {
+    hint: "30 April: human case totals + exposure linkage + care-seeking context.",
+    model: [
+      "By 30 April, 26 suspected human cases identified; all had onset after contact with the 11 April cow; exposures included skinning/butchering/carrying/eating; only 10 sought care; low care-seeking potentially due to fears after a prior Marburg outbreak (stigma/quarantine/disinfectant)."
+    ]
+  },
+  Q11: {
+    hint: "Describe by person/place/time; then evaluate exposures; summarize symptoms; compute measures of association.",
+    model: [
+      "Summarize demographics (age/sex), symptoms (cutaneous vs GI), and exposures; produce line list and descriptive tables.",
+      "Create an epi curve (time), spot map (place) if possible, and compute attack rates by subgroups.",
+      "For cohort data: compute attack rates by exposure and risk ratios; assess protective practices (e.g., boiling time)."
+    ]
+  },
+  Q12: {
+    hint: "Link the first three timeline events to the curve’s x-axis around those dates.",
+    model: [
+      "Add arrows at: 11 April (cow death/butchering), 20 April (7 patients present), 21 April (RRT investigation/anthrax suspected)."
+    ]
+  },
+  Q13: {
+    hint: "Look at shape, timing after exposure, clustering, and relationship to cattle deaths.",
+    model: [
+      "Pattern is consistent with a point-source exposure (cow death/butchering) followed by a sharp rise in human cases a few days later, then tapering.",
+      "Cattle deaths occur around/after human cases, highlighting ongoing animal transmission/environmental contamination risk."
+    ]
+  },
+  Q14: {
+    hint: "Use Appendix 3 line list + Table 4 denominators (populations) to compute attack rates.",
+    model: [
+      "Compute attack rate = (cases in group / population in group) × 100 for sex and age groups; confirm totals."
+    ]
+  },
+  Q15: {
+    hint: "Compute AR = cases / total exposed (cases + non-cases) × 100 for each exposure.",
+    model: ["Use the provided case/non-case counts to compute attack rates for each exposure and compare which are highest."]
+  },
+  Q16: {
+    hint: "Consider fear, stigma, economic loss, compensation, enforcement, trust, and access.",
+    model: [
+      "Owners may fear culling, movement bans, stigma, or loss of income; lack of compensation discourages reporting; distrust or low risk perception; access barriers.",
+      "Improve reporting by community engagement, clear communication, supportive policies/compensation, accessible veterinary services, and involving trusted local leaders/CHWs."
+    ]
+  },
+  Q17: {
+    hint: "Think immediate vs longer-term; human and animal; environment; surveillance; risk communication.",
+    model: [
+      "Short-term: treat cases; PPE guidance; stop consumption of suspect meat; safe carcass disposal (don’t open carcasses); decontaminate sites; ring vaccination of livestock; active case finding; risk communication via radio/CHWs; coordinate across sectors.",
+      "Longer-term: routine livestock vaccination strategies; affordable vaccine access/subsidies; One Health coordination mechanisms; strengthen surveillance and lab capacity; community education and policies for carcass management/compensation."
+    ]
+  },
+  Q18: {
+    hint: "Consider livelihood dependence on livestock/meat; beliefs; access; trust; previous outbreak fears; decision-making structures.",
+    model: [
+      "Cultural/economic: butchering/eating dead animals may be driven by food insecurity and avoiding loss; reluctance to bury/burn valuable meat; vaccine cost; shared ownership complicates payment decisions.",
+      "Context: limited roads/access; low literacy; radio reliance; prior outbreak fears reduce care-seeking; need trusted messengers and feasible alternatives."
+    ]
+  },
+  Q19: {
+    hint: "Think: mandates, data sharing, resources, leadership, trust, coordination costs, and different priorities.",
+    model: [
+      "Barriers: unclear roles/authority, siloed funding, weak data sharing, limited joint training, competing priorities, logistic constraints, political/community dynamics.",
+      "Enablers: joint plans, shared incident management, interoperable surveillance, regular joint reviews, and a local One Health taskforce."
+    ]
+  }
+};
+
+// ---------- Sections definition ----------
+const SECTIONS = [
+  {
+    name: "Intro",
+    tag: "Overview",
+    html: () => `
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Scenario</div>
+        <div class="muted small">
+          You are part of a district rapid response team investigating a suspected anthrax outbreak at the human–animal interface
+          in Kaplobotwo village, Ngenge subcounty, Kween District (Uganda). Work through the investigation and response decisions.
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card" style="box-shadow:none;">
+          <div class="hd"><h2>Background (key facts)</h2><div class="tag">Part A</div></div>
+          <div class="bd">
+            ${DATA.narrative.background.map(x=>`
+              <div class="q" style="margin:10px 0;">
+                <div class="row">
+                  <div class="qid">${x.dateLabel}</div>
+                </div>
+                <div class="prompt muted small">${x.text}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;">
+          <div class="hd"><h2>Quick-start</h2><div class="tag">How this works</div></div>
+          <div class="bd">
+            <div class="chip">✅ Save responses locally</div>
+            <div class="chip">🧮 Auto-calculate attack rates</div>
+            <div class="chip">📈 Epi curve activity</div>
+            <div class="chip">🧠 One Health team thinking</div>
+            <div class="hr"></div>
+            <div class="muted small">
+              This module is optimized for small-group facilitation:
+              trainees discuss, enter responses, and compare to model guidance. Facilitators can toggle answer visibility.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ${renderQuestion("Q1", "Question 1", "Would you call this an outbreak? Why or why not?")}
+
+      <div class="callout good">
+        <div style="font-weight:700; margin-bottom:6px;">Tip</div>
+        <div class="small muted">
+          For zoonotic events, control measures may need to start early in animals and humans while lab confirmation is pending.
+        </div>
+      </div>
+    `,
+    activities: ["Q1"]
+  },
+
+  {
+    name: "Part A",
+    tag: "Initial investigation",
+    html: () => `
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Investigation team & One Health framing</div>
+        <div class="small muted">
+          The RRT includes public health, lab, veterinary, environmental health, and administration roles.
+          You will identify additional agencies and roles, and consider zoonotic investigation differences.
+        </div>
+      </div>
+
+      ${renderQuestion("Q2", "Question 2", `
+        Keeping in mind that all seven index cases were involved in butchering or eating a cow,
+        which government agencies might be interested in participating in the investigation?
+        What types of staff might be part of a field investigation team?
+      `)}
+
+      ${renderQuestion("Q3", "Question 3", `
+        <b>a.</b> What was the likely source of infection for the human cases?<br/>
+        <b>b.</b> What was the likely source of infection for the cow?
+      `)}
+
+      <div class="q">
+        <div class="row">
+          <div class="qid">Reference</div>
+        </div>
+        <div class="prompt">
+          <b>Steps of an outbreak investigation</b> (zoonotic adaptation encouraged):
+        </div>
+        <ol class="muted small" style="margin:0; padding-left:18px; line-height:1.5;">
+          ${DATA.narrative.outbreakSteps.map(s=>`<li>${s}</li>`).join("")}
+        </ol>
+      </div>
+
+      ${renderQuestion("Q4", "Question 4", "Which step is missing (from the canonical outbreak investigation list)?")}
+
+      ${renderQuestion("Q5", "Question 5", "From a public health perspective, which steps might be approached differently in a zoonotic disease investigation?")}
+
+      ${renderQuestion("Q6", "Question 6", "How does an outbreak case definition differ from a standard surveillance case definition?")}
+
+      <div class="two">
+        <div class="q">
+          <div class="row"><div class="qid">Human case definition (working)</div></div>
+          <div class="prompt muted small">
+            <b>Cutaneous suspected:</b> ${DATA.narrative.humanCaseDefinition.clinical.cutaneousSuspected}<br/><br/>
+            <b>GI suspected:</b> ${DATA.narrative.humanCaseDefinition.clinical.giSuspected}<br/><br/>
+            <b>Confirmed:</b> ${DATA.narrative.humanCaseDefinition.clinical.confirmed}<br/><br/>
+            <b>Time:</b> ${DATA.narrative.humanCaseDefinition.time}<br/>
+            <b>Place/Person:</b> ${DATA.narrative.humanCaseDefinition.placePerson}
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="row"><div class="qid">Cattle case definition (working)</div></div>
+          <div class="prompt muted small">
+            <b>Suspected:</b> ${DATA.narrative.cattleCaseDefinition.suspected}<br/><br/>
+            <b>Confirmed:</b> ${DATA.narrative.cattleCaseDefinition.confirmed}
+          </div>
+        </div>
+      </div>
+
+      ${renderQuestion("Q7", "Question 7", "What are some ways you might look for additional cases (active case finding) among humans?")}
+      ${renderQuestion("Q8", "Question 8", "What are the advantages of using a disease-specific case investigation form as part of active case finding?")}
+      ${renderQuestion("Q9", "Question 9", "How might information from the animal investigation help the human investigation (and vice versa)?")}
+    `,
+    activities: ["Q2","Q3","Q4","Q5","Q6","Q7","Q8","Q9"]
+  },
+
+  {
+    name: "Timeline",
+    tag: "Table 2 activity",
+    html: () => `
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Timeline (11–30 April)</div>
+        <div class="small muted">
+          Complete the missing entries by extracting key events described during the investigation, then compare to model guidance.
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="row"><div class="qid">Timeline builder</div></div>
+        <div class="prompt muted small">
+          Fill in the missing timeline rows below. Use short bullet phrases.
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:140px;">Date</th>
+              <th>Event (your entry)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${["11 April","20 April","21 April","22 April","23–29 April","30 April"].map(d=>`
+              <tr>
+                <td class="mono">${d}</td>
+                <td>
+                  <textarea data-timeline="${d}" placeholder="Type the key event(s) for ${d}..."></textarea>
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+
+        <div class="controls">
+          <button class="btn good" onclick="saveTimeline()">Save</button>
+          <button class="btn primary" onclick="checkTimeline()">Check vs model</button>
+          <button class="btn warn" onclick="revealTimelineModel()">Reveal model (facilitator)</button>
+        </div>
+
+        <div id="timelineFeedback" class="scoreline"></div>
+        <div id="timelineModel" class="answer hidden"></div>
+      </div>
+
+      ${renderQuestion("Q10a","Question 10a","What key information from 22 April would you add to the timeline?")}
+      ${renderQuestion("Q10b","Question 10b","What key information from 23–29 April would you add to the timeline?")}
+      ${renderQuestion("Q10c","Question 10c","What key information from 30 April would you add to the timeline?")}
+    `,
+    activities: ["Timeline","Q10a","Q10b","Q10c"]
+  },
+
+  {
+    name: "Part B",
+    tag: "Describe & analyze data",
+    html: () => `
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Data collected</div>
+        <div class="small muted">
+          A cohort study was conducted in Kaplobotwo: all 57 households visited; 141 people responded (of 234 residents).
+          During the cohort study, 22 additional cases were identified (48 total; 45 suspected, 3 confirmed).
+        </div>
+      </div>
+
+      ${renderQuestion("Q11", "Question 11", `
+        How would you analyse the data on demographics, clinical symptoms, and exposures?
+      `)}
+
+      <div class="two">
+        <div class="q">
+          <div class="row"><div class="qid">Clinical presentation distribution (Table 3)</div></div>
+          <table>
+            <thead>
+              <tr><th>Presentation</th><th style="width:110px;">Cases</th><th style="width:140px;">Percent</th></tr>
+            </thead>
+            <tbody>
+              ${DATA.narrative.partB.clinicalDistribution.map(r=>`
+                <tr>
+                  <td>${r.type}</td>
+                  <td class="mono">${r.n}</td>
+                  <td class="mono">${r.pct}%</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="q">
+          <div class="row"><div class="qid">Epi curve (Figure 2)</div></div>
+          <div class="prompt muted small">
+            Explore the epi curve and add the first three timeline events as markers. Then interpret the curve.
+          </div>
+          <canvas id="epiChart" height="170"></canvas>
+          <div class="controls">
+            <button class="btn primary" onclick="addEpiMarkers()">Add markers (11, 20, 21 Apr)</button>
+            <button class="btn warn" onclick="resetEpiMarkers()">Reset markers</button>
+          </div>
+        </div>
+      </div>
+
+      ${renderQuestion("Q12", "Question 12", "Add arrows to the epidemic curve to indicate the first three events from the timeline (11 Apr, 20 Apr, 21 Apr). Describe where they go.")}
+      ${renderQuestion("Q13", "Question 13", "Interpret the epidemic curve.")}
+
+      <div class="q">
+        <div class="row"><div class="qid">Attack rates by sex and age group (Tables 4a & 4b)</div></div>
+        <div class="prompt muted small">
+          Use the Appendix 3 line list to calculate attack rates and complete Tables 4a and 4b.
+          Click <b>Compute from line list</b> to check your work.
+        </div>
+
+        <div class="two">
+          <div>
+            <div class="muted small" style="margin:6px 0 8px;"><b>Table 4a — by sex</b></div>
+            <table id="tblSex">
+              <thead><tr><th>Sex</th><th style="width:120px;">Cases</th><th style="width:120px;">Population</th><th style="width:140px;">Attack rate</th></tr></thead>
+              <tbody>
+                <tr><td>Males</td><td><input id="sexM_cases" placeholder="cases"/></td><td class="mono">${DATA.denominators.bySex.M}</td><td><input id="sexM_ar" placeholder="%" /></td></tr>
+                <tr><td>Females</td><td><input id="sexF_cases" placeholder="cases"/></td><td class="mono">${DATA.denominators.bySex.F}</td><td><input id="sexF_ar" placeholder="%" /></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="muted small" style="margin:6px 0 8px;"><b>Table 4b — by age group</b></div>
+            <table id="tblAge">
+              <thead><tr><th>Age group</th><th style="width:120px;">Cases</th><th style="width:120px;">Population</th><th style="width:140px;">Attack rate</th></tr></thead>
+              <tbody>
+                ${DATA.denominators.byAgeGroup.map((g,i)=>`
+                  <tr>
+                    <td>${g.label}</td>
+                    <td><input id="age_${i}_cases" placeholder="cases"/></td>
+                    <td class="mono">${g.pop}</td>
+                    <td><input id="age_${i}_ar" placeholder="%" /></td>
+                  </tr>
+                `).join("")}
+                <tr>
+                  <td><b>Total</b></td>
+                  <td><input id="age_total_cases" placeholder="cases"/></td>
+                  <td class="mono">${DATA.denominators.byAgeGroup.reduce((s,x)=>s+x.pop,0)}</td>
+                  <td><input id="age_total_ar" placeholder="%" /></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn good" onclick="saveTables4()">Save your entries</button>
+          <button class="btn primary" onclick="computeTables4()">Compute from line list</button>
+          <button class="btn warn" onclick="revealTables4()">Reveal model values</button>
+        </div>
+        <div id="tables4Feedback" class="scoreline"></div>
+        <div id="tables4Model" class="answer hidden"></div>
+      </div>
+
+      ${renderQuestion("Q14","Question 14","Using the line list data in Appendix 3, calculate attack rates and complete Tables 4a and 4b.")}
+
+      <div class="q">
+        <div class="row"><div class="qid">Question 15 — Exposure attack rates (cutaneous anthrax)</div></div>
+        <div class="prompt muted small">
+          Calculate attack rates for exposures possibly associated with cutaneous anthrax using the case/non-case counts provided.
+        </div>
+
+        <table id="tblQ15">
+          <thead>
+            <tr>
+              <th>Possible exposure</th>
+              <th style="width:110px;">Case</th>
+              <th style="width:110px;">Non-case</th>
+              <th style="width:110px;">Total</th>
+              <th style="width:160px;">Attack rate</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DATA.exposuresQ15.map((x,i)=>`
+              <tr>
+                <td>${x.exposure}</td>
+                <td class="mono">${x.case}</td>
+                <td class="mono">${x.noncase}</td>
+                <td class="mono" id="q15_total_${i}">—</td>
+                <td><input id="q15_ar_${i}" placeholder="%" /></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+
+        <div class="controls">
+          <button class="btn good" onclick="saveQ15()">Save</button>
+          <button class="btn primary" onclick="computeQ15()">Compute</button>
+          <button class="btn warn" onclick="revealQ15()">Reveal model values</button>
+        </div>
+        <div id="q15Feedback" class="scoreline"></div>
+      </div>
+
+      ${renderQuestion("Q15","Question 15 (written)","Calculate attack rates for exposures possibly associated with cutaneous anthrax, based on the table above. Which exposures appear highest risk?")}
+
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Tracing meat and cooking practices</div>
+        <div class="small muted">
+          ${DATA.narrative.partB.cookingFinding.villages.map(v=>`• <b>${v.village}:</b> ${v.detail}`).join("<br/>")}
+          <br/><br/>
+          ${DATA.narrative.partB.cookingFinding.note}<br/>
+          <b>Analytic note:</b> ${DATA.narrative.partB.cookingFinding.rrProtective}
+        </div>
+      </div>
+
+      ${renderQuestion("Q16","Question 16",`
+        Why might some livestock owners with sick animals not come forward during an outbreak?
+        How can reporting and compliance be improved?
+      `)}
+    `,
+    activities: ["Q11","Q12","Q13","Tables4","Q14","Q15_calc","Q15","Q16"]
+  },
+
+  {
+    name: "Part C",
+    tag: "Response",
+    html: () => `
+      <div class="callout">
+        <div style="font-weight:700; margin-bottom:6px;">Joint findings meeting (30 April)</div>
+        <div class="small muted">
+          Public health and animal health teams meet to coordinate actions based on findings so far.
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="row"><div class="qid">Findings summary</div></div>
+        <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.45;">
+          ${DATA.narrative.partCFindings.map(x=>`<li>${x}</li>`).join("")}
+        </ul>
+      </div>
+
+      ${renderQuestion("Q17","Question 17",`
+        Based on the findings of the outbreak investigation, what short-term and longer-term actions
+        and control measures might you undertake?
+      `)}
+
+      ${renderQuestion("Q18","Question 18",`
+        What are some possible cultural and contextual challenges associated with the proposed control measures,
+        and other factors that are important to consider?
+      `)}
+
+      ${renderQuestion("Q19","Question 19",`
+        Considering a One Health approach to outbreak investigation and disease control,
+        what challenges can limit effective multisectoral collaboration?
+      `)}
+    `,
+    activities: ["Q17","Q18","Q19"]
+  },
+
+  {
+    name: "Appendix",
+    tag: "Reference (One Health & Anthrax)",
+    html: () => `
+      <div class="two">
+        <div class="q">
+          <div class="row"><div class="qid">Appendix 1 — One Health</div></div>
+          <div class="prompt muted small">
+            <b>Definition:</b> ${DATA.appendix.oneHealth.definition}
+          </div>
+          <div class="hr"></div>
+          <div class="prompt"><b>Why it matters</b></div>
+          <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.45;">
+            ${DATA.appendix.oneHealth.relevance.map(x=>`<li>${x}</li>`).join("")}
+          </ul>
+          <div class="hr"></div>
+          <div class="prompt"><b>Professions involved</b></div>
+          <div>
+            ${DATA.appendix.oneHealth.professions.map(p=>`<span class="chip">${p}</span>`).join("")}
+          </div>
+        </div>
+
+        <div class="q">
+          <div class="row"><div class="qid">Appendix 2 — Anthrax fact sheet</div></div>
+
+          <div class="prompt"><b>Overview</b></div>
+          <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.45;">
+            ${DATA.appendix.anthraxFacts.overview.map(x=>`<li>${x}</li>`).join("")}
+          </ul>
+
+          <div class="hr"></div>
+          <div class="prompt"><b>In animals</b></div>
+          <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.45;">
+            ${DATA.appendix.anthraxFacts.animals.map(x=>`<li>${x}</li>`).join("")}
+          </ul>
+
+          <div class="hr"></div>
+          <div class="prompt"><b>In humans</b></div>
+          <ul class="small muted" style="margin:0; padding-left:18px; line-height:1.45;">
+            ${DATA.appendix.anthraxFacts.humans.map(x=>`<li>${x}</li>`).join("")}
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout good">
+        <div style="font-weight:700; margin-bottom:6px;">Conclusion</div>
+        <div class="small muted">${DATA.narrative.conclusion}</div>
+      </div>
+
+      <div class="q">
+        <div class="row"><div class="qid">Appendix 3 — Line list (embedded data)</div></div>
+        <div class="prompt muted small">
+          The line list data are embedded in this module to support attack-rate calculations. You can view a subset below.
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th><th>Sex</th><th>Age</th><th>Category</th><th>Onset</th><th>Lab</th><th>Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DATA.lineList.slice(0,10).map(r=>`
+              <tr>
+                <td class="mono">${r.caseNo}</td>
+                <td class="mono">${r.sex}</td>
+                <td class="mono">${r.age}</td>
+                <td>${r.cat}</td>
+                <td class="mono">${r.onset}</td>
+                <td class="mono">${r.lab}</td>
+                <td class="mono">${r.result||""}</td>
+              </tr>
+            `).join("")}
+            <tr><td colspan="7" class="muted small">Showing first 10 of ${DATA.lineList.length} cases.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="controls">
+          <button class="btn primary" onclick="exportLineList()">Export line list (CSV)</button>
+        </div>
+      </div>
+    `,
+    activities: ["AppendixViewed"]
+  }
+];
+
+// ---------- Render helpers ----------
+function renderQuestion(key, title, promptHtml){
+  // Register activity key in totals
+  const id = `act_${key}`;
+  const saved = (STATE.responses && STATE.responses[key]) || "";
+  return `
+    <div class="q" data-activity="${key}">
+      <div class="row">
+        <div>
+          <div class="qid">${key}</div>
+          <div style="font-weight:700; margin-top:2px;">${title}</div>
+        </div>
+        <div class="controls" style="margin:0;">
+          <button class="btn good" onclick="markDone('${key}')">Mark done</button>
+          <button class="btn primary" onclick="checkAnswer('${key}')">Check</button>
+          <button class="btn warn" onclick="toggleHint('${key}')">Hint</button>
+          <button class="btn danger" onclick="toggleModel('${key}')">Model</button>
+        </div>
+      </div>
+
+      <div class="prompt">${promptHtml}</div>
+
+      <textarea id="${id}" placeholder="Type your response here...">${escapeHtml(saved)}</textarea>
+
+      <div id="hint_${key}" class="hint hidden"></div>
+      <div id="model_${key}" class="answer hidden"></div>
+      <div id="score_${key}" class="scoreline"></div>
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  return (str||"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+// ---------- UI building ----------
+function buildNav(){
+  const nav = $("#nav");
+  nav.innerHTML = SECTIONS.map((s,i)=>`<a href="#" data-i="${i}" class="${i===STATE.currentSection?'active':''}">${s.name}</a>`).join("");
+  $$("#nav a").forEach(a=>{
+    a.addEventListener("click", (e)=>{
+      e.preventDefault();
+      goSection(parseInt(a.dataset.i,10));
+    });
+  });
+}
+
+function buildSections(){
+  const host = $("#sections");
+  host.innerHTML = SECTIONS.map((s,i)=>`
+    <div class="section ${i===STATE.currentSection?'active':''}" data-sec="${i}">
+      ${s.html()}
+    </div>
+  `).join("");
+
+  // restore timeline textareas and hook input events for saving
+  // Hook generic response save on blur
+  $$("textarea[id^='act_']").forEach(t=>{
+    const key = t.id.replace("act_","");
+    t.addEventListener("blur", ()=>{
+      STATE.responses[key] = t.value;
+      saveState(STATE);
+      toast("Saved", `${key} response saved locally.`);
+    });
+  });
+
+  // Timeline textareas
+  $$("textarea[data-timeline]").forEach(t=>{
+    const d = t.dataset.timeline;
+    const saved = (STATE.responses && STATE.responses[`timeline_${d}`]) || "";
+    t.value = saved;
+    t.addEventListener("blur", ()=>{
+      STATE.responses[`timeline_${d}`] = t.value;
+      saveState(STATE);
+      toast("Saved", `Timeline entry saved.`);
+    });
+  });
+
+  // Initialize epi curve once in Part B
+  setTimeout(()=>{
+    if($("#epiChart")) initEpiCurve();
+  }, 30);
+
+  // Pre-fill Q15 totals
+  setTimeout(()=>{
+    if($("#tblQ15")){
+      DATA.exposuresQ15.forEach((x,i)=>{
+        const total = x.case + x.noncase;
+        $(`#q15_total_${i}`).textContent = total;
+      });
+    }
+  }, 0);
+}
+
+function setHeader(){
+  const s = SECTIONS[STATE.currentSection];
+  $("#secName").textContent = s.name;
+  $("#sectionTitle").textContent = s.name;
+  $("#sectionTag").textContent = s.tag;
+  $("#modeTag").textContent = STATE.mode === "facilitator" ? "Facilitator Mode" : "Trainee Mode";
+  $("#btnToggleMode").textContent = STATE.mode === "facilitator" ? "Switch to Trainee Mode" : "Switch to Facilitator Mode";
+}
+
+function allActivityKeys(){
+  const keys = [];
+  SECTIONS.forEach(sec=>{
+    (sec.activities||[]).forEach(k=>keys.push(k));
+  });
+  return keys;
+}
+
+function updateKPIs(){
+  const keys = allActivityKeys();
+  const doneCount = keys.filter(k=>STATE.done[k]).length;
+  $("#kpiAnswered").textContent = doneCount;
+  $("#kpiTotal").textContent = keys.length;
+  $("#pct").textContent = pct(doneCount, keys.length) + "%";
+}
+
+function goSection(i){
+  i = Math.max(0, Math.min(SECTIONS.length-1, i));
+  STATE.currentSection = i;
+  saveState(STATE);
+
+  $$(".section").forEach(s=>s.classList.remove("active"));
+  $(`.section[data-sec="${i}"]`).classList.add("active");
+
+  $$("#nav a").forEach(a=>a.classList.toggle("active", parseInt(a.dataset.i,10)===i));
+
+  setHeader();
+  updateKPIs();
+
+  // Re-init epi curve if we land on Part B
+  if(SECTIONS[i].name === "Part B") setTimeout(()=>{ if($("#epiChart")) initEpiCurve(); }, 30);
+
+  // In facilitator mode, auto-show model blocks already toggled? We'll keep current toggles.
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+$("#btnNext").addEventListener("click", ()=> goSection(STATE.currentSection + 1));
+
+$("#btnToggleMode").addEventListener("click", ()=>{
+  STATE.mode = (STATE.mode === "facilitator") ? "trainee" : "facilitator";
+  saveState(STATE);
+  setHeader();
+  toast("Mode changed", STATE.mode === "facilitator" ? "Model answers can be revealed." : "Model answers hidden by default.");
+});
+
+$("#btnReset").addEventListener("click", ()=>{
+  if(confirm("Reset saved responses and completion?")){
+    STATE = defaultState();
+    saveState(STATE);
+    buildNav();
+    buildSections();
+    setHeader();
+    updateKPIs();
+    toast("Reset", "Progress cleared.");
+  }
+});
+
+// ---------- Activity actions ----------
+function markDone(key){
+  STATE.done[key] = true;
+  saveState(STATE);
+  updateKPIs();
+  toast("Completed", `${key} marked done.`);
+}
+
+function toggleHint(key){
+  const el = $(`#hint_${key}`);
+  if(!el) return;
+  const hint = (MODEL[key] && MODEL[key].hint) ? MODEL[key].hint : "No hint available for this item.";
+  el.innerHTML = `<b>Hint:</b> ${escapeHtml(hint)}`;
+  el.classList.toggle("hidden");
+}
+
+function toggleModel(key){
+  const el = $(`#model_${key}`);
+  if(!el) return;
+
+  if(STATE.mode !== "facilitator"){
+    toast("Facilitator Mode required", "Switch modes to reveal model guidance.");
+    return;
+  }
+
+  const model = (MODEL[key] && MODEL[key].model) ? MODEL[key].model : ["No model guidance available."];
+  el.innerHTML = `<b>Model guidance:</b><ul class="small" style="margin:8px 0 0; padding-left:18px; line-height:1.45;">${
+    model.map(x=>`<li>${escapeHtml(x)}</li>`).join("")
+  }</ul>`;
+  el.classList.toggle("hidden");
+}
+
+function checkAnswer(key){
+  // This is a lightweight rubric-based checker:
+  // It looks for presence of key concepts (not exact phrasing).
+  const t = $(`#act_${key}`);
+  if(!t) return;
+  const txt = (t.value||"").toLowerCase();
+  STATE.responses[key] = t.value;
+  saveState(STATE);
+
+  const rubric = buildRubric(key);
+  if(!rubric){
+    $(`#score_${key}`).textContent = "Saved. (No automated check rubric for this item.)";
+    return;
+  }
+
+  let hits = 0;
+  let total = rubric.must.length + rubric.nice.length;
+  const hitMust = [];
+  const missMust = [];
+  const hitNice = [];
+
+  rubric.must.forEach(k=>{
+    if(k.any.some(term=>txt.includes(term))){
+      hits++; hitMust.push(k.label);
+    } else {
+      missMust.push(k.label);
+    }
+  });
+  rubric.nice.forEach(k=>{
+    if(k.any.some(term=>txt.includes(term))){
+      hits++; hitNice.push(k.label);
+    }
+  });
+
+  const score = pct(hits, total);
+  let msg = `Auto-check score: ${score}% • Must-have covered: ${hitMust.length}/${rubric.must.length}.`;
+  if(missMust.length){
+    msg += ` Missing key points: ${missMust.join("; ")}.`;
+  }
+  $(`#score_${key}`).textContent = msg;
+
+  // mark done if all must-have met
+  if(missMust.length === 0 && rubric.must.length>0){
+    STATE.done[key] = true;
+    saveState(STATE);
+    updateKPIs();
+  }
+}
+
+// Define simple rubrics for key questions
+function buildRubric(key){
+  const R = {
+    Q1: {
+      must: [
+        {label:"cluster/unusual increase", any:["cluster","outbreak","more than expected","increase","unusual"]},
+        {label:"common exposure", any:["cow","butcher","skinning","meat","exposure"]},
+      ],
+      nice: [
+        {label:"time/place linkage", any:["kaplobotwo","kween","ngenge","same village"]},
+      ]
+    },
+    Q2: {
+      must: [
+        {label:"public health involvement", any:["health","district","public"]},
+        {label:"animal/veterinary involvement", any:["veter","animal","livestock","agricult"]},
+      ],
+      nice: [
+        {label:"lab/environment/risk comms", any:["laborat","environment","health promotion","communication","chw","community"]},
+      ]
+    },
+    Q4: { must:[{label:"hypotheses", any:["hypoth"]}], nice:[] },
+    Q6: {
+      must:[
+        {label:"tailored to time/place/person", any:["time","place","person","specific","tailor"]},
+      ],
+      nice:[
+        {label:"more sensitive early", any:["sensitive","broad","early"]},
+        {label:"surveillance is standardized", any:["standard","consistent","routine","ongoing"]},
+      ]
+    },
+    Q11: {
+      must:[
+        {label:"describe by time/place/person", any:["time","place","person","epi curve","line list","descriptive"]},
+        {label:"analyze exposures", any:["attack rate","risk ratio","rr","exposure","cohort"]},
+      ],
+      nice:[
+        {label:"symptom categories", any:["cutaneous","gastro","gi","clinical"]},
+      ]
+    },
+    Q13: {
+      must:[
+        {label:"point-source / common exposure", any:["point","common source","single exposure","cow"]},
+        {label:"timing after exposure", any:["incub","few days","after","delay"]},
+      ],
+      nice:[
+        {label:"animal deaths context", any:["cattle","animal","environment","spore"]},
+      ]
+    },
+    Q16: {
+      must:[
+        {label:"economic disincentives", any:["loss","income","compensation","cost"]},
+        {label:"fear/stigma/trust issues", any:["fear","stigma","trust","punish","ban"]},
+      ],
+      nice:[
+        {label:"improve via engagement/policy", any:["engage","community","policy","support","subsid"]},
+      ]
+    },
+    Q19: {
+      must:[
+        {label:"siloed mandates/resources", any:["silo","mandate","fund","resource","budget"]},
+        {label:"data sharing/coordination barriers", any:["data","sharing","coordination","communication"]},
+      ],
+      nice:[
+        {label:"joint taskforce/incident mgmt", any:["taskforce","ims","incident","joint"]},
+      ]
+    }
+  };
+  return R[key] || null;
+}
+
+// ---------- Timeline functions ----------
+function saveTimeline(){
+  $$("textarea[data-timeline]").forEach(t=>{
+    const d = t.dataset.timeline;
+    STATE.responses[`timeline_${d}`] = t.value;
+  });
+  STATE.done["Timeline"] = true;
+  saveState(STATE);
+  updateKPIs();
+  toast("Saved", "Timeline entries saved.");
+}
+
+function revealTimelineModel(){
+  if(STATE.mode !== "facilitator"){
+    toast("Facilitator Mode required", "Switch modes to reveal model timeline.");
+    return;
+  }
+  const box = $("#timelineModel");
+  box.innerHTML = `<b>Model timeline entries:</b><ul class="small" style="margin:8px 0 0; padding-left:18px; line-height:1.45;">${
+    DATA.narrative.timelineKeyFacts.map(x=>`<li><span class="mono">${x.date}:</span> ${escapeHtml(x.fact)}</li>`).join("")
+  }</ul>`;
+  box.classList.remove("hidden");
+}
+
+function checkTimeline(){
+  // soft check: counts how many timeline rows have some content + flags empty
+  let filled = 0;
+  const rows = $$("textarea[data-timeline]");
+  rows.forEach(t=>{ if((t.value||"").trim().length>10) filled++; });
+  $("#timelineFeedback").textContent = `You filled ${filled}/${rows.length} rows. Use “Reveal model” in Facilitator Mode to compare content accuracy.`;
+  if(filled === rows.length){
+    STATE.done["Timeline"] = true;
+    saveState(STATE);
+    updateKPIs();
+  }
+}
+
+// ---------- Table 4 functions ----------
+function saveTables4(){
+  // Save user-entered fields
+  const payload = {
+    sexM_cases: $("#sexM_cases").value,
+    sexM_ar: $("#sexM_ar").value,
+    sexF_cases: $("#sexF_cases").value,
+    sexF_ar: $("#sexF_ar").value,
+    ages: DATA.denominators.byAgeGroup.map((g,i)=>({
+      cases: $(`#age_${i}_cases`).value,
+      ar: $(`#age_${i}_ar`).value
+    })),
+    total_cases: $("#age_total_cases").value,
+    total_ar: $("#age_total_ar").value
+  };
+  STATE.responses["Tables4_entries"] = payload;
+  STATE.done["Tables4"] = true;
+  saveState(STATE);
+  updateKPIs();
+  toast("Saved", "Tables 4a/4b entries saved.");
+}
+
+function computeTables4(){
+  const bySex = computeAttackRatesBySex();
+  const byAge = computeAttackRatesByAgeGroup();
+
+  // populate computed values into feedback + optionally into fields
+  $("#sexM_cases").value = bySex.M.cases;
+  $("#sexM_ar").value = bySex.M.ar;
+  $("#sexF_cases").value = bySex.F.cases;
+  $("#sexF_ar").value = bySex.F.ar;
+
+  byAge.rows.forEach((r,i)=>{
+    $(`#age_${i}_cases`).value = r.cases;
+    $(`#age_${i}_ar`).value = r.ar;
+  });
+  $("#age_total_cases").value = byAge.total.cases;
+  $("#age_total_ar").value = byAge.total.ar;
+
+  STATE.done["Tables4"] = true;
+  saveState(STATE);
+  updateKPIs();
+  $("#tables4Feedback").textContent = "Computed values filled from the embedded Appendix 3 line list.";
+  toast("Computed", "Tables 4 values calculated.");
+}
+
+function revealTables4(){
+  if(STATE.mode !== "facilitator"){
+    toast("Facilitator Mode required", "Switch modes to reveal model values.");
+    return;
+  }
+  const bySex = computeAttackRatesBySex();
+  const byAge = computeAttackRatesByAgeGroup();
+
+  $("#tables4Model").innerHTML = `
+    <b>Model values (computed from Appendix 3 line list):</b>
+    <div class="small" style="margin-top:8px;">
+      <b>By sex:</b>
+      <ul style="margin:6px 0 0; padding-left:18px; line-height:1.45;">
+        <li>Males: ${bySex.M.cases}/${bySex.M.pop} = ${bySex.M.ar}</li>
+        <li>Females: ${bySex.F.cases}/${bySex.F.pop} = ${bySex.F.ar}</li>
+        <li>Total: ${bySex.total.cases}/${bySex.total.pop} = ${bySex.total.ar}</li>
+      </ul>
+      <div style="margin-top:10px;"><b>By age group:</b></div>
+      <ul style="margin:6px 0 0; padding-left:18px; line-height:1.45;">
+        ${byAge.rows.map(r=>`<li>${r.label}: ${r.cases}/${r.pop} = ${r.ar}</li>`).join("")}
+        <li><b>Total:</b> ${byAge.total.cases}/${byAge.total.pop} = ${byAge.total.ar}</li>
+      </ul>
+    </div>
+  `;
+  $("#tables4Model").classList.remove("hidden");
+}
+
+// ---------- Q15 functions ----------
+function saveQ15(){
+  const ar = DATA.exposuresQ15.map((x,i)=>$("#q15_ar_"+i).value);
+  STATE.responses["Q15_calc"] = ar;
+  STATE.done["Q15_calc"] = true;
+  saveState(STATE);
+  updateKPIs();
+  toast("Saved", "Q15 entries saved.");
+}
+
+function computeQ15(){
+  const rows = computeExposureAttackRatesQ15();
+  rows.forEach((r,i)=>{
+    $(`#q15_total_${i}`).textContent = r.total;
+    $(`#q15_ar_${i}`).value = r.ar;
+  });
+  STATE.done["Q15_calc"] = true;
+  saveState(STATE);
+  updateKPIs();
+  $("#q15Feedback").textContent = "Computed attack rates filled. Compare which exposures have the highest attack rates.";
+  toast("Computed", "Q15 attack rates calculated.");
+}
+
+function revealQ15(){
+  if(STATE.mode !== "facilitator"){
+    toast("Facilitator Mode required", "Switch modes to reveal model values.");
+    return;
+  }
+  computeQ15();
+}
+
+// ---------- Epi curve ----------
+let epiChart = null;
+let markerPlugin = null;
+let markers = [];
+
+function initEpiCurve(){
+  const ctx = $("#epiChart");
+  if(!ctx) return;
+
+  const base = DATA.epiCurve;
+  markers = [];
+
+  // simple plugin to draw vertical lines with labels
+  markerPlugin = {
+    id: "markers",
+    afterDatasetsDraw(chart){
+      const {ctx, chartArea, scales} = chart;
+      const x = scales.x;
+      ctx.save();
+      markers.forEach(m=>{
+        const idx = base.labels.indexOf(m.label);
+        if(idx < 0) return;
+        const xPos = x.getPixelForValue(idx);
+        ctx.beginPath();
+        ctx.setLineDash([6,6]);
+        ctx.strokeStyle = "rgba(125,211,252,.55)";
+        ctx.lineWidth = 2;
+        ctx.moveTo(xPos, chartArea.top);
+        ctx.lineTo(xPos, chartArea.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(232,238,252,.9)";
+        ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue('--sans');
+        ctx.fillText(m.text, xPos + 6, chartArea.top + 14 + (m.offset||0));
+      });
+      ctx.restore();
+    }
+  };
+
+  if(epiChart){
+    epiChart.destroy();
+  }
+
+  epiChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: base.labels,
+      datasets: [
+        {
+          label: "Human cases",
+          data: base.human,
+          borderWidth: 0
+        },
+        {
+          label: "Cattle deaths",
+          data: base.cattle,
+          borderWidth: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: "rgba(232,238,252,.85)" } },
+        tooltip: { enabled: true }
+      },
+      scales: {
+        x: {
+          ticks: { color: "rgba(182,195,230,.9)" },
+          grid: { color: "rgba(255,255,255,.08)" },
+          title: { display:true, text:"April 2018 (day of month)", color:"rgba(182,195,230,.9)" }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: "rgba(182,195,230,.9)" },
+          grid: { color: "rgba(255,255,255,.08)" },
+          title: { display:true, text:"Count", color:"rgba(182,195,230,.9)" }
+        }
+      }
+    },
+    plugins: [markerPlugin]
+  });
+}
+
+function addEpiMarkers(){
+  markers = [
+    {label:"11", text:"11 Apr: cow dies/butchered", offset:0},
+    {label:"20", text:"20 Apr: 7 present to clinic", offset:14},
+    {label:"21", text:"21 Apr: RRT begins", offset:28},
+  ];
+  if(epiChart) epiChart.update();
+  toast("Markers added", "Added the first three timeline events to the epi curve.");
+  // mark activity done
+  STATE.done["Q12"] = true;
+  saveState(STATE);
+  updateKPIs();
+}
+
+function resetEpiMarkers(){
+  markers = [];
+  if(epiChart) epiChart.update();
+}
+
+// ---------- Export line list ----------
+function exportLineList(){
+  const header = ["caseNo","sex","age","category","onset","labInvestigation","labResult"];
+  const rows = DATA.lineList.map(r=>[
+    r.caseNo, r.sex, r.age, r.cat, r.onset, r.lab, r.result||""
+  ]);
+  const csv = [header.join(","), ...rows.map(r=>r.map(x=>String(x).replaceAll('"','""')).map(x=>`"${x}"`).join(","))].join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "anthrax_appendix3_line_list.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// ---------- Init ----------
+(function init(){
+  buildNav();
+  buildSections();
+  setHeader();
+  updateKPIs();
+
+  // If saved table entries exist, restore them
+  const t4 = STATE.responses["Tables4_entries"];
+  if(t4){
+    setTimeout(()=>{
+      if($("#sexM_cases")){
+        $("#sexM_cases").value = t4.sexM_cases || "";
+        $("#sexM_ar").value = t4.sexM_ar || "";
+        $("#sexF_cases").value = t4.sexF_cases || "";
+        $("#sexF_ar").value = t4.sexF_ar || "";
+        (t4.ages||[]).forEach((x,i)=>{
+          const c = $(`#age_${i}_cases`);
+          const a = $(`#age_${i}_ar`);
+          if(c) c.value = x.cases || "";
+          if(a) a.value = x.ar || "";
+        });
+        $("#age_total_cases").value = t4.total_cases || "";
+        $("#age_total_ar").value = t4.total_ar || "";
+      }
+    }, 60);
+  }
+
+  const q15 = STATE.responses["Q15_calc"];
+  if(q15){
+    setTimeout(()=>{
+      q15.forEach((v,i)=>{
+        const el = $(`#q15_ar_${i}`);
+        if(el) el.value = v;
+      });
+    }, 60);
+  }
+})();
+</script>
+
+</body>
+</html>
