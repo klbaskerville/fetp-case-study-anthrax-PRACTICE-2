@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthrax in Uganda - One Health Case Study</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .objectives {
+            background: #edf2f7;
+            padding: 25px;
+            margin: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #4299e1;
+        }
+
+        .objectives h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .objectives ul {
+            margin-left: 20px;
+        }
+
+        .objectives li {
+            margin: 8px 0;
+            color: #4a5568;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4299e1;
+        }
+
+        .timeline-item {
+            background: #f7fafc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 5px;
+        }
+
+        .question-box {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .question-box h4 {
+            color: #c53030;
+            margin-bottom: 10px;
+        }
+
+        .answer-box {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .answer-box.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 5px;
+            font-family: inherit;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        button:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e0;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #4299e1;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        .map-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 10px;
+        }
+
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            transition: width 0.5s;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border: 2px solid #cbd5e0;
+            border-radius: 5px;
+            width: 100px;
+            margin: 5px;
+        }
+
+        .calculation-table input {
+            width: 80px;
+        }
+
+        .appendix {
+            background: #f7fafc;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .chart-placeholder {
+            background: #edf2f7;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐄 Anthrax in the Cattle-Keeping Corridor of Uganda</h1>
+            <p>A One Health Case Study in Applied Epidemiology</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">FETP-Frontline 3.0 - Workshop 2</p>
+        </div>
+
+        <div class="objectives">
+            <h3>📋 Learning Objectives</h3>
+            <ul>
+                <li>Describe the usual sequence of steps of outbreak investigation, and how they differ for zoonotic diseases</li>
+                <li>Define the One Health approach and its relevance to zoonotic disease outbreaks</li>
+                <li>List multi-disciplinary team members required for investigation and their roles</li>
+                <li>Calculate attack rates to identify possible exposures causing disease</li>
+                <li>Identify strategies for joint control of disease in animals and people</li>
+                <li>Describe challenges that can limit effective multisectoral coordination</li>
+            </ul>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+
+        <div class="content">
+            <!-- Section 0: Introduction -->
+            <div class="section active" id="section0">
+                <h2 class="section-title">Introduction to One Health</h2>
+                
+                <div class="info-box">
+                    <h3>What is One Health?</h3>
+                    <p>One Health is a collaborative, multisectoral, and transdisciplinary approach — working at the local, regional, national, and global levels — with the goal of achieving optimal health outcomes recognizing the interconnection between people, animals, plants, and their shared environment.</p>
+                </div>
+
+                <h3>Why One Health Matters for Zoonotic Diseases</h3>
+                <ul style="margin: 15px 0 15px 30px;">
+                    <li>Approximately 60% of infectious diseases in humans are zoonotic</li>
+                    <li>Approximately 70% of emerging infectious diseases are zoonotic</li>
+                    <li>Early detection in animals can prevent transmission to humans</li>
+                    <li>Control in animal populations may be most effective prevention strategy</li>
+                </ul>
+
+                <h3>Key Professions in One Health</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Profession</th>
+                            <th>Role in Outbreak Response</th>
+                        </tr>
+                        <tr>
+                            <td>Public Health Epidemiologists</td>
+                            <td>Human disease surveillance and investigation</td>
+                        </tr>
+                        <tr>
+                            <td>Veterinary Epidemiologists</td>
+                            <td>Animal disease surveillance and investigation</td>
+                        </tr>
+                        <tr>
+                            <td>Clinicians & Nurses</td>
+                            <td>Patient care and clinical diagnosis</td>
+                        </tr>
+                        <tr>
+                            <td>Veterinarians</td>
+                            <td>Animal health assessment and treatment</td>
+                        </tr>
+                        <tr>
+                            <td>Laboratory Technicians</td>
+                            <td>Sample testing and confirmation</td>
+                        </tr>
+                        <tr>
+                            <td>Environmental Scientists</td>
+                            <td>Environmental assessment and contamination control</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="navigation">
+                    <button disabled>← Previous</button>
+                    <button onclick="nextSection()">Next: The Outbreak →</button>
+                </div>
+            </div>
+
+            <!-- Section 1: Background -->
+            <div class="section" id="section1">
+                <h2 class="section-title">Part A: Background and Initial Investigation</h2>
+                
+                <div class="timeline-item">
+                    <div class="timeline-date">📅 Friday, April 20, 2018</div>
+                    <p>Seven people presented to a health centre in Kween District, Uganda with swollen skin blisters and lesions with black tissue in the centre.</p>
+                    <ul style="margin: 10px 0 0 30px;">
+                        <li>6 males (ages 14-62), 1 female (age 3)</li>
+                        <li>All from Kaplobotwo village (subcounty Ngenge, Kween District)</li>
+                        <li>All involved in skinning, butchering, carrying or eating a cow that died suddenly on April 11</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 1: Would you call this an outbreak? Why or why not?</h4>
+                    <textarea id="answer1" placeholder="Type your answer here..."></textarea>
+                    <button onclick="toggleAnswer('answer1-result')">Show Discussion Points</button>
+                    <div id="answer1-result" class="answer-box">
+                        <strong>Key Discussion Points:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>Yes, this is an outbreak - multiple cases of similar illness in same time and place</li>
+                            <li>Cases exceed normal expected frequency (baseline = 0)</li>
+                            <li>Common source exposure (the dead cow)</li>
+                            <li>Cluster in time (9 days) and place (same village)</li>
+                            <li>Similar clinical presentation across cases</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Setting: Kween District</h3>
+                <div class="map-container">
+                    <p><strong>📍 Location:</strong> Mountainous area, part of Uganda's 'cattle-keeping corridor', bordering Kenya</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>Community Characteristics:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Population:</strong> ~100,000 people in Kween district</li>
+                        <li><strong>Demographics:</strong> >50% under 18 years; ~33% illiterate</li>
+                        <li><strong>Livelihood:</strong> 85% subsistence farming; 80% raise livestock</li>
+                        <li><strong>Communication:</strong> ~50% own radios (main info source); <2% own TVs</li>
+                        <li><strong>Kaplobotwo Village:</strong> 234 residents (127 males, 138 <18 years old)</li>
+                    </ul>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Multisectoral Challenges →</button>
+                </div>
+            </div>
+
+            <!-- Section 13: Multisectoral Coordination -->
+            <div class="section" id="section13">
+                <h2 class="section-title">One Health Coordination Challenges</h2>
+
+                <div class="question-box">
+                    <h4>Question 19: Considering a One Health approach, what challenges can limit effective multisectoral collaboration?</h4>
+                    <textarea id="answer19" placeholder="Think about organizational, structural, and practical barriers..."></textarea>
+                    <button onclick="toggleAnswer('answer19-result')">Show Answer</button>
+                    <div id="answer19-result" class="answer-box">
+                        <strong>Challenges to Multisectoral Collaboration:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Structural/Organizational:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Different ministries/agencies with separate chains of command</li>
+                                    <li>Separate budgets and funding streams</li>
+                                    <li>Different reporting requirements and timelines</li>
+                                    <li>Lack of formal coordination mechanisms</li>
+                                </ul>
+                            </li>
+                            <li><strong>Technical:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Different case definitions and surveillance systems</li>
+                                    <li>Separate laboratory networks and testing protocols</li>
+                                    <li>Different data management systems (incompatible)</li>
+                                    <li>Varying levels of technical expertise</li>
+                                </ul>
+                            </li>
+                            <li><strong>Communication:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>No established communication channels between sectors</li>
+                                    <li>Different professional languages/jargon</li>
+                                    <li>Information silos - data not shared</li>
+                                </ul>
+                            </li>
+                            <li><strong>Professional/Cultural:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Sector-specific priorities and mandates</li>
+                                    <li>Professional territoriality</li>
+                                    <li>Lack of understanding of other sectors' roles</li>
+                                </ul>
+                            </li>
+                            <li><strong>Resource:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Limited funding for joint activities</li>
+                                    <li>Competition for resources</li>
+                                    <li>Inadequate staff for multisectoral work</li>
+                                </ul>
+                            </li>
+                            <li><strong>Policy/Legal:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Lack of legal framework for collaboration</li>
+                                    <li>Unclear roles and responsibilities</li>
+                                    <li>No accountability mechanisms for joint action</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Conclusion →</button>
+                </div>
+            </div>
+
+            <!-- Section 14: Conclusion -->
+            <div class="section" id="section14">
+                <h2 class="section-title">Part D: Conclusion</h2>
+
+                <div class="info-box">
+                    <h3>Key Lessons from This Outbreak</h3>
+                    <p>This outbreak of anthrax in animals and people in the 'cattle-keeping corridor' of Uganda highlights the need for coordinated investigations and response by public and animal health authorities for suspected zoonotic disease outbreaks.</p>
+                </div>
+
+                <div class="warning-box">
+                    <h4>Success Factors:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>One Health Approach:</strong> Multidisciplinary team including human health, animal health, and environmental health professionals</li>
+                        <li><strong>Early Intervention:</strong> All human cases linked to single cow death on April 11</li>
+                        <li><strong>Effective Response:</strong> No human cases linked to subsequent cow deaths (April 22, 23, 29) - likely due to:
+                            <ul style="margin-left: 20px;">
+                                <li>Community health education campaigns</li>
+                                <li>Appropriate carcass management</li>
+                                <li>Vaccination of susceptible animals</li>
+                                <li>Environmental decontamination</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h4>Moving Forward: Kween District One Health Taskforce</h4>
+                    <p>Based on lessons learned, the outbreak team formed a permanent <strong>Kween District One Health Taskforce</strong> to:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Improve information sharing between animal and human health sectors</li>
+                        <li>Support prevention, detection, and response to zoonotic disease outbreaks</li>
+                        <li>Build sustainable multisectoral collaboration</li>
+                        <li>Strengthen surveillance systems</li>
+                        <li>Coordinate community engagement efforts</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 30px;">Core One Health Principles Demonstrated:</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div style="background: #ebf8ff; padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #2c5282;">🤝 Collaboration</h4>
+                        <p>Multiple sectors working together with shared goals</p>
+                    </div>
+                    <div style="background: #f0fff4; padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #22543d;">🔄 Integration</h4>
+                        <p>Combining human and animal surveillance and response</p>
+                    </div>
+                    <div style="background: #fffaf0; padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #7c2d12;">🌍 Systems Thinking</h4>
+                        <p>Understanding interconnections between people, animals, and environment</p>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Appendices →</button>
+                </div>
+            </div>
+
+            <!-- Section 15: Appendices -->
+            <div class="section" id="section15">
+                <h2 class="section-title">Appendix: Anthrax Fact Sheet</h2>
+
+                <div class="appendix">
+                    <h3>What is Anthrax?</h3>
+                    <p>Anthrax is an illness caused by the bacteria <em>Bacillus anthracis</em>. The bacteria are endemic in soil in certain areas, where they persist as environmentally-resistant spores.</p>
+
+                    <h4 style="margin-top: 20px;">Key Epidemiological Features:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>NOT contagious:</strong> No significant spread between live animals or humans</li>
+                        <li><strong>Source:</strong> Soil-borne spores in endemic areas</li>
+                        <li><strong>Spore resistance:</strong> Highly resistant, viable for many years in some soil types</li>
+                        <li><strong>Destruction:</strong> Spores destroyed by moist heat at 100-105°C for 20 minutes</li>
+                    </ul>
+
+                    <h3 style="margin-top: 25px;">Anthrax in Animals</h3>
+                    
+                    <h4>Cattle, Sheep, Goats, Camelids:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Generally causes <strong>sudden death</strong></li>
+                        <li>Blood may be present around nose, mouth, anus</li>
+                        <li>High levels of septicemia at death</li>
+                        <li>Carcasses contaminate environment with spores</li>
+                        <li><strong>⚠️ DO NOT OPEN CARCASS</strong> - exposure to oxygen allows spore formation</li>
+                    </ul>
+
+                    <h4 style="margin-top: 15px;">Pigs:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Some natural resistance</li>
+                        <li>May recover from disease</li>
+                        <li>Signs: bloody feces, nasal hemorrhage, respiratory distress, or mild fever with swelling</li>
+                    </ul>
+
+                    <h4 style="margin-top: 15px;">Proper Carcass Management:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Isolate carcass from other animals</li>
+                        <li><strong>Do not open the carcass</strong></li>
+                        <li>Decontaminate death site</li>
+                        <li>Incinerate or deep burial of carcass</li>
+                    </ul>
+
+                    <h3 style="margin-top: 25px;">Anthrax in Humans</h3>
+
+                    <div style="margin-top: 15px;">
+                        <h4>1. Cutaneous Anthrax (Most Common)</h4>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Route:</strong> Spores enter through skin lesions while handling contaminated animal products</li>
+                            <li><strong>Incubation:</strong> 1-7 days (can be longer)</li>
+                            <li><strong>Signs:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Group of blisters with itching and swelling</li>
+                                    <li>Progresses to painless sore with necrotic black scab (eschar)</li>
+                                    <li>Typically on hands, arms, face, neck</li>
+                                    <li>May not seek care due to lack of pain</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <h4>2. Gastrointestinal Anthrax</h4>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Route:</strong> Eating raw or undercooked meat from infected animals</li>
+                            <li><strong>Incubation:</strong> 3-7 days (can be longer)</li>
+                            <li><strong>Signs:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Fever, swollen neck glands</li>
+                                    <li>Sore throat, headache</li>
+                                    <li>Nausea and vomiting (may include blood)</li>
+                                    <li>Diarrhea (may include blood)</li>
+                                    <li>Abdominal swelling, fainting</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <h4>3. Inhalational (Pulmonary) Anthrax</h4>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Route:</strong> Inhaling spores (e.g., processing contaminated hides, wool)</li>
+                            <li><strong>Incubation:</strong> 1-7 days (can be longer)</li>
+                            <li><strong>Signs:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Fever, fatigue, aches</li>
+                                    <li>Nausea and vomiting</li>
+                                    <li>Chest discomfort</li>
+                                    <li>Cough and difficulty breathing</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <h4>Other Forms:</h4>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Meningeal anthrax:</strong> Often secondary to other forms</li>
+                            <li><strong>Injection anthrax:</strong> Associated with contaminated needles</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation" style="margin-top: 30px;">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Line List Data →</button>
+                </div>
+            </div>
+
+            <!-- Section 16: Line List Data -->
+            <div class="section" id="section16">
+                <h2 class="section-title">Appendix 3: Line List Data</h2>
+
+                <div class="info-box">
+                    <p><strong>Complete case data for all 48 anthrax cases from Kaplobotwo village</strong></p>
+                    <p><em>Cases arranged by age to facilitate calculating attack rates by age group</em></p>
+                    <p style="margin-top: 10px;"><strong>Legend:</strong></p>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Cutan-Only</strong> = Cutaneous anthrax only</li>
+                        <li><strong>GI-Only</strong> = Gastrointestinal anthrax only</li>
+                        <li><strong>Cutan-GI</strong> = Concurrent cutaneous and gastrointestinal anthrax</li>
+                        <li><strong>Lab investigation:</strong> 0 = No, 1 = Yes</li>
+                    </ul>
+                </div>
+
+                <div class="table-container" style="margin-top: 20px;">
+                    <table style="font-size: 0.9em;">
+                        <thead>
+                            <tr>
+                                <th>Case No.</th>
+                                <th>District</th>
+                                <th>Subcounty</th>
+                                <th>Village</th>
+                                <th>Sex</th>
+                                <th>Age</th>
+                                <th>Anthrax Category</th>
+                                <th>Date of Onset</th>
+                                <th>Lab Investigation?</th>
+                                <th>Lab Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>1</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>91</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>1</td>
+                                <td>Cutan-Only</td>
+                                <td>20/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>125</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>2</td>
+                                <td>GI-Only</td>
+                                <td>16/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>23</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>3</td>
+                                <td>Cutan-GI</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>57</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>3</td>
+                                <td>Cutan-GI</td>
+                                <td>17/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>94</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>3</td>
+                                <td>GI-Only</td>
+                                <td>19/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>74</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>3</td>
+                                <td>GI-Only</td>
+                                <td>13/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>4</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>73</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>4</td>
+                                <td>GI-Only</td>
+                                <td>13/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>123</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>5</td>
+                                <td>Cutan-GI</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>58</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>5</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>34</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>5</td>
+                                <td>GI-Only</td>
+                                <td>13/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>6</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>59</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>7</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>8</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>121</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>11</td>
+                                <td>GI-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>82</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>14</td>
+                                <td>Cutan-Only</td>
+                                <td>14/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>87</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>16</td>
+                                <td>Cutan-GI</td>
+                                <td>13/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>122</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>21</td>
+                                <td>GI-Only</td>
+                                <td>14/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>22</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>103</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>25</td>
+                                <td>Cutan-GI</td>
+                                <td>14/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>60</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>26</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>70</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>26</td>
+                                <td>Cutan-Only</td>
+                                <td>18/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>56</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>27</td>
+                                <td>Cutan-Only</td>
+                                <td>17/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>72</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>28</td>
+                                <td>Cutan-Only</td>
+                                <td>16/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>30</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>71</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>30</td>
+                                <td>GI-Only</td>
+                                <td>13/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>96</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>34</td>
+                                <td>Cutan-Only</td>
+                                <td>17/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr style="background: #fffaf0;">
+                                <td>15</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>35</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>1</td>
+                                <td><strong>Positive</strong></td>
+                            </tr>
+                            <tr>
+                                <td>98</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>35</td>
+                                <td>GI-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr style="background: #fffaf0;">
+                                <td>97</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>38</td>
+                                <td>Cutan-GI</td>
+                                <td>13/4/18</td>
+                                <td>1</td>
+                                <td><strong>Positive</strong></td>
+                            </tr>
+                            <tr style="background: #fffaf0;">
+                                <td>55</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>44</td>
+                                <td>Cutan-GI</td>
+                                <td>25/4/18</td>
+                                <td>1</td>
+                                <td><strong>Positive</strong></td>
+                            </tr>
+                            <tr>
+                                <td>64</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>45</td>
+                                <td>Cutan-GI</td>
+                                <td>18/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>33</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>45</td>
+                                <td>Cutan-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>93</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>47</td>
+                                <td>Cutan-Only</td>
+                                <td>13/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>31</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>48</td>
+                                <td>Cutan-Only</td>
+                                <td>17/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>92</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>53</td>
+                                <td>Cutan-Only</td>
+                                <td>24/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>119</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>53</td>
+                                <td>GI-Only</td>
+                                <td>16/4/18</td>
+                                <td>1</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>26</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>55</td>
+                                <td>Cutan-Only</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>99</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>57</td>
+                                <td>GI-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>21</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>58</td>
+                                <td>GI-Only</td>
+                                <td>18/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>105</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>60</td>
+                                <td>Cutan-GI</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>76</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>61</td>
+                                <td>Cutan-Only</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>62</td>
+                                <td>Cutan-GI</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>75</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>65</td>
+                                <td>Cutan-Only</td>
+                                <td>14/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>104</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>65</td>
+                                <td>Cutan-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>29</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>F</td>
+                                <td>75</td>
+                                <td>GI-Only</td>
+                                <td>15/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>30</td>
+                                <td>Kween</td>
+                                <td>Ngenge</td>
+                                <td>Kaplobotwo</td>
+                                <td>M</td>
+                                <td>84</td>
+                                <td>GI-Only</td>
+                                <td>13/4/18</td>
+                                <td>0</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <h4>Summary Statistics from Line List:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li><strong>Total Cases:</strong> 48</li>
+                        <li><strong>Males:</strong> 32 (66.7%)</li>
+                        <li><strong>Females:</strong> 16 (33.3%)</li>
+                        <li><strong>Age range:</strong> 1 to 84 years</li>
+                        <li><strong>Median age:</strong> ~30 years</li>
+                        <li><strong>Laboratory tested:</strong> 13 cases (27.1%)</li>
+                        <li><strong>Laboratory confirmed:</strong> 3 cases (6.3% of total; 23.1% of tested)</li>
+                        <li><strong>Date range:</strong> April 13-25, 2018</li>
+                        <li><strong>Peak date:</strong> April 15 (most cases)</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box" style="margin-top: 20px;">
+                    <h4>💡 Exercise for Trainees:</h4>
+                    <p>Use this line list data to practice your epidemiological skills:</p>
+                    <ol style="margin-left: 30px; margin-top: 10px;">
+                        <li>Verify the attack rate calculations from Question 14</li>
+                        <li>Calculate the sex ratio (M:F)</li>
+                        <li>Create an epidemic curve by hand</li>
+                        <li>Calculate the incubation period range (using April 11 cow death as exposure date)</li>
+                        <li>Compare clinical presentation by age group</li>
+                        <li>Analyze the proportion receiving laboratory confirmation</li>
+                    </ol>
+                </div>
+
+                <div class="navigation" style="margin-top: 30px;">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="location.reload()">Start Over 🔄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 0;
+        const totalSections = 17;
+
+        function updateProgress() {
+            const progress = (currentSection / (totalSections - 1)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showSection(n) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            sections[n].classList.add('active');
+            window.scrollTo(0, 0);
+            updateProgress();
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections - 1) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 0) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function toggleAnswer(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('show');
+        }
+
+        function checkSexAR() {
+            const maleCases = parseInt(document.getElementById('male-cases').value);
+            const maleAR = parseFloat(document.getElementById('male-ar').value);
+            const femaleCases = parseInt(document.getElementById('female-cases').value);
+            const femaleAR = parseFloat(document.getElementById('female-ar').value);
+
+            const correctMaleCases = 32;
+            const correctMaleAR = 25.2;
+            const correctFemaleCases = 16;
+            const correctFemaleAR = 15.0;
+
+            let result = '<h4>Results:</h4>';
+            
+            if (maleCases === correctMaleCases && Math.abs(maleAR - correctMaleAR) < 0.2) {
+                result += '<p style="color: #22543d;">✓ Males: Correct! 32 cases / 127 population = 25.2%</p>';
+            } else {
+                result += '<p style="color: #c53030;">✗ Males: Correct answer is 32 cases, 25.2% attack rate</p>';
+            }
+
+            if (femaleCases === correctFemaleCases && Math.abs(femaleAR - correctFemaleAR) < 0.2) {
+                result += '<p style="color: #22543d;">✓ Females: Correct! 16 cases / 107 population = 15.0%</p>';
+            } else {
+                result += '<p style="color: #c53030;">✗ Females: Correct answer is 16 cases, 15.0% attack rate</p>';
+            }
+
+            result += '<p style="margin-top: 10px;"><strong>Interpretation:</strong> Males had higher attack rate (25.2% vs 15.0%), likely due to greater involvement in butchering and skinning activities.</p>';
+
+            const resultDiv = document.getElementById('sex-ar-result');
+            resultDiv.innerHTML = result;
+            resultDiv.classList.add('show');
+        }
+
+        function checkAgeAR() {
+            const answers = [
+                {id: 'age0', cases: 9, ar: 22.0},
+                {id: 'age1', cases: 5, ar: 12.2},
+                {id: 'age2', cases: 2, ar: 3.6},
+                {id: 'age3', cases: 8, ar: 17.8},
+                {id: 'age4', cases: 17, ar: 43.6},
+                {id: 'age5', cases: 7, ar: 58.3}
+            ];
+
+            const populations = [41, 41, 56, 45, 39, 12];
+            let allCorrect = true;
+            let result = '<h4>Results:</h4>';
+
+            answers.forEach((ans, idx) => {
+                const cases = parseInt(document.getElementById(ans.id + '-cases').value);
+                const ar = parseFloat(document.getElementById(ans.id + '-ar').value);
+
+                if (cases === ans.cases && Math.abs(ar - ans.ar) < 0.5) {
+                    result += `<p style="color: #22543d;">✓ Age group ${idx}: Correct!</p>`;
+                } else {
+                    result += `<p style="color: #c53030;">✗ Age group ${idx}: ${ans.cases} cases, ${ans.ar}% AR</p>`;
+                    allCorrect = false;
+                }
+            });
+
+            const totalCases = parseInt(document.getElementById('age-total-cases').value);
+            const totalAR = parseFloat(document.getElementById('age-total-ar').value);
+            
+            if (totalCases === 48 && Math.abs(totalAR - 20.5) < 0.2) {
+                result += '<p style="color: #22543d;">✓ Total: Correct! 48 cases, 20.5% overall attack rate</p>';
+            } else {
+                result += '<p style="color: #c53030;">✗ Total: 48 cases, 20.5% overall attack rate</p>';
+            }
+
+            result += '<p style="margin-top: 10px;"><strong>Interpretation:</strong> Highest attack rates in 35-54 (43.6%) and ≥55 (58.3%) age groups - adults more likely involved in high-risk activities (butchering, skinning).</p>';
+
+            const resultDiv = document.getElementById('age-ar-result');
+            resultDiv.innerHTML = result;
+            resultDiv.classList.add('show');
+        }
+
+        function checkExposureAR() {
+            const exposures = [
+                {id: 'exp1', ar: 52.5, activity: 'Carried/butchered'},
+                {id: 'exp2', ar: 80.0, activity: 'Skinned cow'},
+                {id: 'exp3', ar: 87.5, activity: 'Carried skin'},
+                {id: 'exp4', ar: 90.0, activity: 'Cut/butchered'},
+                {id: 'exp5', ar: 80.0, activity: 'Cleaned waste'},
+                {id: 'exp6', ar: 70.0, activity: 'Removed organs'},
+                {id: 'exp7', ar: 33.3, activity: 'Prepared meat'}
+            ];
+
+            let result = '<h4>Results:</h4>';
+            
+            exposures.forEach(exp => {
+                const ar = parseFloat(document.getElementById(exp.id + '-ar').value);
+                if (Math.abs(ar - exp.ar) < 1.0) {
+                    result += `<p style="color: #22543d;">✓ ${exp.activity}: Correct! (${exp.ar}%)</p>`;
+                } else {
+                    result += `<p style="color: #c53030;">✗ ${exp.activity}: ${exp.ar}%</p>`;
+                }
+            });
+
+            result += `
+                <div style="margin-top: 15px; padding: 10px; background: #fffaf0; border-radius: 5px;">
+                    <strong>Key Findings:</strong>
+                    <ul style="margin-left: 20px; margin-top: 5px;">
+                        <li><strong>Highest risk (80-90%):</strong> Direct contact with carcass - cutting, skinning, carrying skin</li>
+                        <li><strong>Moderate risk (52-70%):</strong> Carrying parts, removing organs, cleaning</li>
+                        <li><strong>Lower risk (33%):</strong> Preparing meat for cooking (less direct contact)</li>
+                        <li><strong>Dose-response evident:</strong> More intimate contact = higher attack rate</li>
+                    </ul>
+                </div>
+            `;
+
+            const resultDiv = document.getElementById('exposure-ar-result');
+            resultDiv.innerHTML = result;
+            resultDiv.classList.add('show');
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>Next: Field Investigation →</button>
+                </div>
+            </div>
+
+            <!-- Section 2: Field Investigation Setup -->
+            <div class="section" id="section2">
+                <h2 class="section-title">The Field Investigation</h2>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">📅 April 21, 2018</div>
+                    <p>The Kween District Health Officer called a meeting with the District Rapid Response Team (RRT), including a fellow from Uganda's Field Epidemiology Training Programme (FETP).</p>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 2: Which government agencies and staff should participate in this investigation?</h4>
+                    <p><em>Remember: All seven index cases were involved in butchering or eating a cow</em></p>
+                    <textarea id="answer2" placeholder="List the agencies and types of staff needed..."></textarea>
+                    <button onclick="toggleAnswer('answer2-result')">Show Answer</button>
+                    <div id="answer2-result" class="answer-box">
+                        <strong>Multidisciplinary Team Needed:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Ministry of Health:</strong> FETP fellows, epidemiologists, health officers, laboratory technicians</li>
+                            <li><strong>Ministry of Agriculture/Animal Health:</strong> District veterinary officer, animal health workers</li>
+                            <li><strong>Environmental Health:</strong> Environmental health officers</li>
+                            <li><strong>Community Health:</strong> Health promotion officers, community health workers</li>
+                            <li><strong>Local Government:</strong> District administrator, village leaders</li>
+                            <li><strong>Laboratory Services:</strong> National Reference Laboratory staff</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>The actual RRT consisted of: FETP fellow, health promotion officer, laboratory technician, district veterinary officer, two environmental health officers, and District Administrator.</em></p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>Initial Investigation Findings:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Cow died suddenly and was butchered shortly after death</li>
+                        <li>15 Kaplobotwo residents involved in butchering and carrying meat</li>
+                        <li>Additional residents ate some of the meat</li>
+                        <li>Some meat was sold to neighbouring villages</li>
+                        <li>Presumptive diagnosis: <strong>Anthrax</strong> (based on skin lesions, cow death, regional history)</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 3:</h4>
+                    <p><strong>a.</strong> What was the likely source of infection for the human cases?</p>
+                    <textarea id="answer3a" placeholder="Your answer..."></textarea>
+                    <p style="margin-top: 15px;"><strong>b.</strong> What was the likely source of infection for the cow?</p>
+                    <textarea id="answer3b" placeholder="Your answer..."></textarea>
+                    <button onclick="toggleAnswer('answer3-result')">Show Answer</button>
+                    <div id="answer3-result" class="answer-box">
+                        <p><strong>a.</strong> The cow that died on April 11. Human infection likely occurred through:</p>
+                        <ul style="margin-left: 20px;">
+                            <li>Cutaneous exposure during skinning/butchering (spores entering skin lesions)</li>
+                            <li>Ingestion of contaminated meat (especially undercooked)</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><strong>b.</strong> Environmental exposure to <em>Bacillus anthracis</em> spores in soil while grazing. Anthrax is endemic in certain soil types and persists as environmentally-resistant spores.</p>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Outbreak Investigation Steps →</button>
+                </div>
+            </div>
+
+            <!-- Section 3: Investigation Steps -->
+            <div class="section" id="section3">
+                <h2 class="section-title">Steps of an Outbreak Investigation</h2>
+
+                <div class="question-box">
+                    <h4>Question 4: Which step is missing from this list?</h4>
+                    <div class="table-container">
+                        <table>
+                            <tr><th>Step</th><th>Description</th></tr>
+                            <tr><td>1</td><td>Identify your team/prepare for field work</td></tr>
+                            <tr><td>2</td><td>Establish the existence of an outbreak</td></tr>
+                            <tr><td>3</td><td>Verify the diagnosis</td></tr>
+                            <tr><td>4</td><td>Construct a working case definition</td></tr>
+                            <tr><td>5</td><td>Find cases and develop line listing</td></tr>
+                            <tr><td>6</td><td>Perform descriptive epidemiology</td></tr>
+                            <tr><td>7</td><td><strong style="color: #c53030;">??? MISSING STEP ???</strong></td></tr>
+                            <tr><td>8</td><td>Evaluate hypotheses through analytical studies</td></tr>
+                            <tr><td>9</td><td>Reconsider, refine and re-evaluate hypotheses</td></tr>
+                            <tr><td>10</td><td>Compare with laboratory/environmental studies</td></tr>
+                            <tr><td>11</td><td>Implement control and prevention measures</td></tr>
+                            <tr><td>12</td><td>Initiate or maintain surveillance</td></tr>
+                            <tr><td>13</td><td>Communicate findings</td></tr>
+                        </table>
+                    </div>
+                    <textarea id="answer4" placeholder="What is step 7?"></textarea>
+                    <button onclick="toggleAnswer('answer4-result')">Show Answer</button>
+                    <div id="answer4-result" class="answer-box">
+                        <strong>Step 7: Develop hypotheses</strong>
+                        <p>After performing descriptive epidemiology (time, place, person), the investigation team should develop hypotheses about the source, mode of transmission, and exposures that caused the outbreak.</p>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 5: From a public health perspective, which steps might be approached differently in a zoonotic disease investigation?</h4>
+                    <textarea id="answer5" placeholder="Consider how investigating both animal and human cases might change the approach..."></textarea>
+                    <button onclick="toggleAnswer('answer5-result')">Show Answer</button>
+                    <div id="answer5-result" class="answer-box">
+                        <strong>Zoonotic Disease Investigation Differences:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Step 1 - Team:</strong> Must include animal health professionals (veterinarians, animal epidemiologists)</li>
+                            <li><strong>Step 3 - Verify diagnosis:</strong> Need to verify in BOTH humans and animals; may require different laboratories</li>
+                            <li><strong>Step 4 - Case definition:</strong> Need separate case definitions for humans AND animals</li>
+                            <li><strong>Step 5 - Case finding:</strong> Active surveillance in both human and animal populations</li>
+                            <li><strong>Step 6 - Descriptive epi:</strong> Parallel analysis of human and animal cases; look for temporal and spatial relationships</li>
+                            <li><strong>Step 7 - Hypotheses:</strong> Consider animal-to-human transmission pathways</li>
+                            <li><strong>Step 11 - Control measures:</strong> Must address BOTH animal and human populations; prevent environmental contamination</li>
+                            <li><strong>Step 13 - Communication:</strong> Coordinate between human and animal health authorities; engage agricultural and veterinary sectors</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Case Definitions →</button>
+                </div>
+            </div>
+
+            <!-- Section 4: Case Definitions -->
+            <div class="section" id="section4">
+                <h2 class="section-title">Verifying Diagnosis and Defining Cases</h2>
+
+                <div class="info-box">
+                    <h4>Diagnostic Verification:</h4>
+                    <p>Samples from all seven patients' skin lesions were collected and sent to the National Reference Laboratory in Kampala for urgent PCR testing for anthrax.</p>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 6: How does an outbreak case definition differ from a standard surveillance case definition?</h4>
+                    <textarea id="answer6" placeholder="Consider time, place, and specificity..."></textarea>
+                    <button onclick="toggleAnswer('answer6-result')">Show Answer</button>
+                    <div id="answer6-result" class="answer-box">
+                        <strong>Outbreak Case Definition vs. Surveillance Definition:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Time specificity:</strong> Outbreak definitions include specific time period related to outbreak; surveillance is ongoing</li>
+                            <li><strong>Place specificity:</strong> Outbreak definitions restricted to affected geographic area; surveillance covers broader area</li>
+                            <li><strong>Person specificity:</strong> May include specific exposures or risk factors related to outbreak source</li>
+                            <li><strong>Sensitivity:</strong> Outbreak definitions often more sensitive (broader) to capture all related cases</li>
+                            <li><strong>Purpose:</strong> Outbreak definition aims to identify all outbreak-related cases; surveillance definition aims for consistent long-term monitoring</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Case Definitions Developed for This Outbreak</h3>
+                
+                <div class="warning-box">
+                    <h4>Human Anthrax Case Definitions:</h4>
+                    <p><strong>Suspected Cutaneous Anthrax:</strong> Onset of itching, reddening or swelling of skin areas AND any of: skin lesions (papule, vesicle, eschar) or lymphadenopathy</p>
+                    <p style="margin-top: 10px;"><strong>Suspected Gastrointestinal Anthrax:</strong> Onset of abdominal pain AND any of: diarrhea, vomiting, lymphadenopathy, pharyngitis, or oropharyngeal lesions</p>
+                    <p style="margin-top: 10px;"><strong>Confirmed Anthrax:</strong> A suspected case with PCR-positivity for <em>Bacillus anthracis</em> from clinical sample</p>
+                    <p style="margin-top: 10px;"><strong>Time:</strong> Onset from April 6 onwards</p>
+                    <p><strong>Place/Person:</strong> Person residing in Kaplobotwo village, Kween District</p>
+                </div>
+
+                <div class="info-box">
+                    <h4>Cattle Anthrax Case Definitions:</h4>
+                    <p><strong>Suspected:</strong> Sudden death, or death within 24 hours of illness onset, with or without blood-stained discharges from external orifices, in cattle in Kaplobotwo village from April 6 onwards</p>
+                    <p style="margin-top: 10px;"><strong>Confirmed:</strong> A suspected cattle case with <em>Bacillus anthracis</em> identified in clinical sample by culture, PCR, or microscopic examination</p>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Active Case Finding →</button>
+                </div>
+            </div>
+
+            <!-- Section 5: Active Case Finding -->
+            <div class="section" id="section5">
+                <h2 class="section-title">Active Case Finding</h2>
+
+                <div class="question-box">
+                    <h4>Question 7: What are some ways you might look for additional cases (active case finding) among humans?</h4>
+                    <textarea id="answer7" placeholder="List methods for finding additional cases..."></textarea>
+                    <button onclick="toggleAnswer('answer7-result')">Show Answer</button>
+                    <div id="answer7-result" class="answer-box">
+                        <strong>Active Case Finding Methods:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>House-to-house visits in affected village</li>
+                            <li>Interview community leaders to identify sick persons</li>
+                            <li>Train community health workers to identify and report cases</li>
+                            <li>Review health facility records for similar presentations</li>
+                            <li>Interview known cases about other sick contacts</li>
+                            <li>Trace persons who had contact with the dead cow (skinning, butchering, carrying, eating)</li>
+                            <li>Trace meat sold to neighboring villages</li>
+                            <li>Community meetings to raise awareness and encourage reporting</li>
+                            <li>Radio announcements (given radio is main communication source)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 8: What are the advantages of using a disease-specific case investigation form?</h4>
+                    <textarea id="answer8" placeholder="Why is a standardized form helpful?"></textarea>
+                    <button onclick="toggleAnswer('answer8-result')">Show Answer</button>
+                    <div id="answer8-result" class="answer-box">
+                        <strong>Advantages of Disease-Specific Case Investigation Forms:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Standardization:</strong> Ensures same information collected from all cases</li>
+                            <li><strong>Completeness:</strong> Reminds investigators to ask all relevant questions</li>
+                            <li><strong>Efficiency:</strong> Speeds up interviews with structured format</li>
+                            <li><strong>Data quality:</strong> Reduces errors and omissions</li>
+                            <li><strong>Analysis:</strong> Makes data entry and analysis easier</li>
+                            <li><strong>Training:</strong> Helps train community health workers on what to ask</li>
+                            <li><strong>Comparability:</strong> Allows comparison with other outbreaks</li>
+                            <li><strong>Documentation:</strong> Creates consistent records for reporting</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>What Actually Happened:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>5 additional cases identified through community leaders</li>
+                        <li>12 suspected cases interviewed using case investigation form</li>
+                        <li>Community health workers trained on active case finding and prevention education</li>
+                        <li>Visual aids used to educate villagers about anthrax prevention</li>
+                    </ul>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Animal Investigation →</button>
+                </div>
+            </div>
+
+            <!-- Section 6: Animal Investigation -->
+            <div class="section" id="section6">
+                <h2 class="section-title">The Animal Health Investigation</h2>
+
+                <div class="warning-box">
+                    <h4>Veterinary Response Actions:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Decontaminated cow's death site and butchering site using formalin (10%)</li>
+                        <li>Vaccinated all livestock with access to contaminated sites</li>
+                        <li>Advised owner on managing anthrax risk</li>
+                        <li>Reported to neighboring livestock owners</li>
+                        <li>Vaccinated all at-risk livestock</li>
+                        <li>Asked owners to monitor animals and report sudden deaths</li>
+                        <li>Reviewed district veterinary records for previous 4 months</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 9: How might information from the animal investigation help the human investigation (and vice versa)?</h4>
+                    <textarea id="answer9" placeholder="Consider what each investigation can tell the other..."></textarea>
+                    <button onclick="toggleAnswer('answer9-result')">Show Answer</button>
+                    <div id="answer9-result" class="answer-box">
+                        <strong>Animal Investigation → Human Investigation:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>Identifies source of human exposure (specific animals)</li>
+                            <li>Timing of animal deaths helps predict human case onset</li>
+                            <li>Location of animal cases indicates high-risk human exposure areas</li>
+                            <li>Historical animal cases show endemic areas and seasonality</li>
+                            <li>Laboratory confirmation in animals supports human diagnosis</li>
+                            <li>Animal movements indicate potential spread to other communities</li>
+                        </ul>
+                        <strong style="margin-top: 10px; display: block;">Human Investigation → Animal Investigation:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>Human exposure history identifies unreported animal deaths</li>
+                            <li>Human cases may alert veterinary services to animal outbreak</li>
+                            <li>Meat distribution patterns help trace infected animals</li>
+                            <li>Human symptoms/timing confirm virulence and transmission routes</li>
+                            <li>Geographic distribution of human cases helps target animal surveillance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Timeline Development →</button>
+                </div>
+            </div>
+
+            <!-- Section 7: Timeline -->
+            <div class="section" id="section7">
+                <h2 class="section-title">Outbreak Timeline</h2>
+
+                <p>Let's build a comprehensive timeline of key events from April 11-30, 2018.</p>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">April 11</div>
+                    <p>Cow dies suddenly, is butchered and eaten in Kaplobotwo village</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">April 20</div>
+                    <p>Seven people present sick to Ngenge III health centre; Dr. K calls district health officer</p>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">April 21</div>
+                    <p>RRT starts field investigation, learns about exposure history. Anthrax suspected.</p>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 10a: What key information from April 22 should be added to the timeline?</h4>
+                    <div class="info-box">
+                        <p><strong>April 22 Events:</strong> Another cow died suddenly in the same area. Blood sample sent to lab for PCR. Carcass buried under supervision, death site decontaminated. Community health workers in neighboring villages trained on active case finding.</p>
+                    </div>
+                    <textarea id="answer10a" placeholder="Summarize the key timeline entry for April 22..."></textarea>
+                    <button onclick="toggleAnswer('answer10a-result')">Show Answer</button>
+                    <div id="answer10a-result" class="answer-box">
+                        <strong>April 22:</strong> Second cow dies suddenly; sample collected, carcass buried and site decontaminated. Active case finding initiated in neighboring villages due to meat and animal movement.
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 10b: What key information from April 23-29 should be added?</h4>
+                    <div class="info-box">
+                        <p><strong>April 23-29 Events:</strong> Seven additional cows found dead (1 in pasture, 6 in stream/bushes) on April 23. Another cow found dead on April 29. Samples collected, carcasses managed. Livestock management interviews conducted. Laboratory confirmed <em>B. anthracis</em> in cattle samples. Ministry of Agriculture notified.</p>
+                    </div>
+                    <textarea id="answer10b" placeholder="Summarize the key timeline entries for April 23-29..."></textarea>
+                    <button onclick="toggleAnswer('answer10b-result')">Show Answer</button>
+                    <div id="answer10b-result" class="answer-box">
+                        <strong>April 23:</strong> Seven more cattle found dead in neighboring area<br>
+                        <strong>April 29:</strong> Another cattle death in Kaplobotwo. Laboratory confirms <em>B. anthracis</em> in cattle samples. Ministry of Agriculture notified.
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 10c: What key information from April 30 should be added?</h4>
+                    <div class="info-box">
+                        <p><strong>April 30 Events:</strong> 26 suspected human cases identified and interviewed. All had symptom onset after contact with the April 11 cow. Only 10 of 26 had sought health centre care. Fear of health facilities noted (related to recent Marburg outbreak - October 2017).</p>
+                    </div>
+                    <textarea id="answer10c" placeholder="Summarize the key timeline entry for April 30..."></textarea>
+                    <button onclick="toggleAnswer('answer10c-result')">Show Answer</button>
+                    <div id="answer10c-result" class="answer-box">
+                        <strong>April 30:</strong> Total 26 suspected human cases identified; all linked to April 11 cow. Low care-seeking (10/26) attributed to Marburg-related health facility fears.
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Descriptive Analysis →</button>
+                </div>
+            </div>
+
+            <!-- Section 8: Descriptive Epidemiology -->
+            <div class="section" id="section8">
+                <h2 class="section-title">Part B: Describing the Data</h2>
+
+                <div class="info-box">
+                    <h4>Cohort Study Details:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>All 57 households in village visited</li>
+                        <li>141 people responded (out of 234 residents)</li>
+                        <li>Non-response due to absence (boarding school, travel for trade/farming)</li>
+                        <li>Data collected on demographics, symptoms, and exposures</li>
+                        <li>22 additional cases identified (total: 48 cases from Kaplobotwo)</li>
+                        <li>45 suspected cases, 3 confirmed cases</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 11: How would you analyze the data on demographics, clinical symptoms, and exposures?</h4>
+                    <textarea id="answer11" placeholder="Describe your analysis approach..."></textarea>
+                    <button onclick="toggleAnswer('answer11-result')">Show Answer</button>
+                    <div id="answer11-result" class="answer-box">
+                        <strong>Analysis Approach:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Time:</strong> Create epidemic curve showing cases by date of onset</li>
+                            <li><strong>Place:</strong> Map cases by household/location; identify clustering</li>
+                            <li><strong>Person:</strong> Calculate attack rates by age, sex, occupation</li>
+                            <li><strong>Clinical:</strong> Describe frequency of symptoms; classify by syndrome (cutaneous, GI, both)</li>
+                            <li><strong>Exposures:</strong> Calculate attack rates by specific exposures (skinning, butchering, carrying, eating meat, cooking method)</li>
+                            <li><strong>Dose-response:</strong> Look for relationship between intensity of exposure and disease</li>
+                            <li><strong>Analytical:</strong> Calculate risk ratios or odds ratios for key exposures</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Clinical Presentation</h3>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>Type of Anthrax Presentation</th>
+                            <th>Number of Cases</th>
+                            <th>Percentage (%)</th>
+                        </tr>
+                        <tr>
+                            <td>Cutaneous only</td>
+                            <td>14</td>
+                            <td>29</td>
+                        </tr>
+                        <tr>
+                            <td>Gastrointestinal only</td>
+                            <td>14</td>
+                            <td>29</td>
+                        </tr>
+                        <tr>
+                            <td>Cutaneous and gastrointestinal</td>
+                            <td>20</td>
+                            <td>42</td>
+                        </tr>
+                        <tr style="background: #e6fffa; font-weight: bold;">
+                            <td>Total cases</td>
+                            <td>48</td>
+                            <td>100</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Epidemic Curve →</button>
+                </div>
+            </div>
+
+            <!-- Section 9: Epidemic Curve -->
+            <div class="section" id="section9">
+                <h2 class="section-title">Epidemic Curve Analysis</h2>
+
+                <div class="chart-placeholder">
+                    <h3>Epidemic Curve</h3>
+                    <p><strong>Suspected and confirmed human cases of anthrax (n=48) and sudden deaths of local cattle (n=10)</strong></p>
+                    <p><em>By date of onset/occurrence, Kaplobotwo, April 2018</em></p>
+                    <p style="margin-top: 20px; font-size: 0.9em;">
+                        📊 <strong>Key Features:</strong><br>
+                        • First human case: April 13 (2 days after cow death on April 11)<br>
+                        • Peak: April 14 (17 human cases)<br>
+                        • Cattle deaths: April 11 (1), April 22 (1), April 23 (7), April 29 (1)<br>
+                        • Human cases clustered April 13-18, with secondary peak April 23<br>
+                        • Pattern suggests point-source outbreak from April 11 cow
+                    </p>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 12: Add arrows to indicate first three timeline events on the epidemic curve</h4>
+                    <p><strong>Events to mark:</strong></p>
+                    <ol style="margin-left: 30px;">
+                        <li>April 11: Cow dies, butchered and eaten</li>
+                        <li>April 20: Seven people present to health centre</li>
+                        <li>April 21: RRT starts investigation</li>
+                    </ol>
+                    <textarea id="answer12" placeholder="Where would these events fall in relation to the case distribution?"></textarea>
+                    <button onclick="toggleAnswer('answer12-result')">Show Answer</button>
+                    <div id="answer12-result" class="answer-box">
+                        <strong>Timeline Markers on Epidemic Curve:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>April 11:</strong> BEFORE first human cases (incubation period 1-7 days for cutaneous, 3-7 for GI)</li>
+                            <li><strong>April 20:</strong> After the main peak; most cases had already occurred but not yet reported</li>
+                            <li><strong>April 21:</strong> On the tail of the curve; investigation began after most transmission had occurred</li>
+                        </ul>
+                        <p style="margin-top: 10px;"><em>This illustrates the challenge of outbreak detection - by the time cases are recognized and reported, much of the exposure may have already occurred.</em></p>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 13: Interpret the epidemic curve</h4>
+                    <textarea id="answer13" placeholder="What does the curve tell you about the outbreak?"></textarea>
+                    <button onclick="toggleAnswer('answer13-result')">Show Answer</button>
+                    <div id="answer13-result" class="answer-box">
+                        <strong>Epidemic Curve Interpretation:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Shape:</strong> Point-source outbreak - sharp rise, peak, gradual decline</li>
+                            <li><strong>Source:</strong> Single common exposure (cow that died April 11)</li>
+                            <li><strong>Timing:</strong> 2-day incubation period (cow death April 11 → first case April 13) consistent with cutaneous anthrax</li>
+                            <li><strong>Duration:</strong> Most cases occurred within 1 week of exposure</li>
+                            <li><strong>Secondary peak:</strong> Small peak around April 23 coincides with additional cattle deaths - suggests possible ongoing exposure</li>
+                            <li><strong>Pattern:</strong> No evidence of person-to-person transmission (anthrax is not contagious)</li>
+                            <li><strong>Cattle-human relationship:</strong> Human cases follow cattle deaths, supporting zoonotic transmission</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Attack Rates →</button>
+                </div>
+            </div>
+
+            <!-- Section 10: Attack Rates -->
+            <div class="section" id="section10">
+                <h2 class="section-title">Calculating Attack Rates</h2>
+
+                <div class="info-box">
+                    <p><strong>Attack Rate Formula:</strong></p>
+                    <p style="text-align: center; font-size: 1.2em; margin: 10px 0;">
+                        Attack Rate = (Number of Cases / Population at Risk) × 100
+                    </p>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 14: Calculate attack rates by sex and age group</h4>
+                    
+                    <h4 style="margin-top: 20px;">Table 4a: Attack Rates by Sex</h4>
+                    <p><em>Use the line list data from Appendix 3 to complete this table</em></p>
+                    <div class="table-container">
+                        <table class="calculation-table">
+                            <tr>
+                                <th>Sex</th>
+                                <th>Number of Cases</th>
+                                <th>Population</th>
+                                <th>Attack Rate (%)</th>
+                            </tr>
+                            <tr>
+                                <td>Males</td>
+                                <td><input type="number" id="male-cases" placeholder="?"></td>
+                                <td>127</td>
+                                <td><input type="number" id="male-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Females</td>
+                                <td><input type="number" id="female-cases" placeholder="?"></td>
+                                <td>107</td>
+                                <td><input type="number" id="female-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <button onclick="checkSexAR()">Check Answers</button>
+                    <div id="sex-ar-result" class="answer-box"></div>
+
+                    <h4 style="margin-top: 30px;">Table 4b: Attack Rates by Age Group</h4>
+                    <div class="table-container">
+                        <table class="calculation-table">
+                            <tr>
+                                <th>Age Group (years)</th>
+                                <th>Number of Cases</th>
+                                <th>Population</th>
+                                <th>Attack Rate (%)</th>
+                            </tr>
+                            <tr>
+                                <td>0-4</td>
+                                <td><input type="number" id="age0-cases" placeholder="?"></td>
+                                <td>41</td>
+                                <td><input type="number" id="age0-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>5-10</td>
+                                <td><input type="number" id="age1-cases" placeholder="?"></td>
+                                <td>41</td>
+                                <td><input type="number" id="age1-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>11-17</td>
+                                <td><input type="number" id="age2-cases" placeholder="?"></td>
+                                <td>56</td>
+                                <td><input type="number" id="age2-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>18-34</td>
+                                <td><input type="number" id="age3-cases" placeholder="?"></td>
+                                <td>45</td>
+                                <td><input type="number" id="age3-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>35-54</td>
+                                <td><input type="number" id="age4-cases" placeholder="?"></td>
+                                <td>39</td>
+                                <td><input type="number" id="age4-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>≥55</td>
+                                <td><input type="number" id="age5-cases" placeholder="?"></td>
+                                <td>12</td>
+                                <td><input type="number" id="age5-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr style="background: #e6fffa; font-weight: bold;">
+                                <td>Total</td>
+                                <td><input type="number" id="age-total-cases" placeholder="?"></td>
+                                <td>234</td>
+                                <td><input type="number" id="age-total-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <button onclick="checkAgeAR()">Check Answers</button>
+                    <div id="age-ar-result" class="answer-box"></div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Exposure Analysis →</button>
+                </div>
+            </div>
+
+            <!-- Section 11: Exposure Analysis -->
+            <div class="section" id="section11">
+                <h2 class="section-title">Analyzing Exposures</h2>
+
+                <div class="question-box">
+                    <h4>Question 15: Calculate attack rates for exposures possibly associated with cutaneous anthrax</h4>
+                    <p><em>Based on cohort study data (n=141 respondents)</em></p>
+                    
+                    <div class="table-container">
+                        <table class="calculation-table">
+                            <tr>
+                                <th>Possible Exposure</th>
+                                <th>Cases</th>
+                                <th>Non-cases</th>
+                                <th>Total</th>
+                                <th>Attack Rate (%)</th>
+                            </tr>
+                            <tr>
+                                <td>Carried dead cow and/or butchered parts</td>
+                                <td>21</td>
+                                <td>19</td>
+                                <td>40</td>
+                                <td><input type="number" id="exp1-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Skinned cow</td>
+                                <td>8</td>
+                                <td>2</td>
+                                <td>10</td>
+                                <td><input type="number" id="exp2-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Carried skin from dead animal</td>
+                                <td>7</td>
+                                <td>1</td>
+                                <td>8</td>
+                                <td><input type="number" id="exp3-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Cut/butchered cow</td>
+                                <td>9</td>
+                                <td>1</td>
+                                <td>10</td>
+                                <td><input type="number" id="exp4-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Cleaned waste from butchering site</td>
+                                <td>8</td>
+                                <td>2</td>
+                                <td>10</td>
+                                <td><input type="number" id="exp5-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Removed internal organs from dead cow</td>
+                                <td>7</td>
+                                <td>3</td>
+                                <td>10</td>
+                                <td><input type="number" id="exp6-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                            <tr>
+                                <td>Prepared meat for cooking</td>
+                                <td>12</td>
+                                <td>24</td>
+                                <td>36</td>
+                                <td><input type="number" id="exp7-ar" placeholder="?" step="0.1"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <button onclick="checkExposureAR()">Check Answers</button>
+                    <div id="exposure-ar-result" class="answer-box"></div>
+                </div>
+
+                <div class="info-box" style="margin-top: 30px;">
+                    <h4>Meat Tracing Results:</h4>
+                    <p><strong>Tukumo Village:</strong> ~23 people ate meat (cooked) in bar → 0 cases</p>
+                    <p><strong>Rikwo Village:</strong> 28 people ate meat (cooked) in bar → 0 cases; 2 people bought meat directly → 2 cases</p>
+                    <p style="margin-top: 10px;"><strong>Key Finding:</strong> Bar owners boiled meat for long time (destroyed spores). Direct buyers roasted meat (insufficient to kill spores - anthrax spores are resistant to dry heat).</p>
+                    <p style="margin-top: 10px;"><strong>Protective Effect:</strong> Boiling meat >60 minutes was protective (RR=0.49 vs. <60 minutes)</p>
+                </div>
+
+                <div class="warning-box">
+                    <h4>Animal Investigation Findings:</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Over 150 suspected anthrax animal cases since January 1, 2018 in Ngenge subcounty</li>
+                        <li>ZERO livestock owners had vaccinated their animals</li>
+                        <li>Government does not subsidize vaccination</li>
+                        <li>Many owners reported vaccines too expensive</li>
+                        <li>Group/extended family ownership complicated decision-making on payment</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 16: Why might some livestock owners with sick animals not come forward during an outbreak? How can reporting and compliance be improved?</h4>
+                    <textarea id="answer16" placeholder="Consider economic, social, and practical barriers..."></textarea>
+                    <button onclick="toggleAnswer('answer16-result')">Show Discussion Points</button>
+                    <div id="answer16-result" class="answer-box">
+                        <strong>Barriers to Reporting:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Economic:</strong> Fear of loss of livelihood; animals are valuable assets; compensation unavailable</li>
+                            <li><strong>Food security:</strong> Temptation to salvage meat from dead animals</li>
+                            <li><strong>Fear of penalties:</strong> Restrictions, quarantine, forced culling</li>
+                            <li><strong>Stigma:</strong> Social consequences of having disease in herd</li>
+                            <li><strong>Lack of trust:</strong> In government authorities</li>
+                            <li><strong>Knowledge gaps:</strong> Not recognizing disease or understanding risks</li>
+                        </ul>
+                        <strong style="margin-top: 10px; display: block;">Improving Reporting & Compliance:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Compensation schemes:</strong> For reported animals/losses</li>
+                            <li><strong>Subsidized vaccination:</strong> Make prevention affordable</li>
+                            <li><strong>Education campaigns:</strong> On disease risks and proper carcass management</li>
+                            <li><strong>Community engagement:</strong> Involve local leaders and veterinarians</li>
+                            <li><strong>Rapid response:</strong> Demonstrate benefits of early reporting</li>
+                            <li><strong>Non-punitive approach:</strong> Support rather than penalize</li>
+                            <li><strong>Alternative livelihoods:</strong> During outbreaks/quarantines</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">Next: Control Measures →</button>
+                </div>
+            </div>
+
+            <!-- Section 12: Control Measures -->
+            <div class="section" id="section12">
+                <h2 class="section-title">Part C: Response and Control Measures</h2>
+
+                <div class="info-box">
+                    <h4>April 30 Meeting: Key Findings Summary</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Human cases started April 13, 2018 from Kaplobotwo village</li>
+                        <li>48 total cases (45 suspected, 3 confirmed)</li>
+                        <li>Most likely cause: Anthrax (based on clinical, epidemiological, and lab findings)</li>
+                        <li>First cattle case: April 11, 2018</li>
+                        <li>10 cattle suspected/confirmed to have died of anthrax during investigation</li>
+                        <li>Retrospective: >150 suspected cattle cases January 1 - April 30 in Ngenge subcounty</li>
+                        <li>Livestock NOT routinely vaccinated</li>
+                    </ul>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 17: Based on the investigation findings, what short-term and longer-term actions and control measures should be undertaken?</h4>
+                    <textarea id="answer17" placeholder="List both immediate and sustainable interventions..."></textarea>
+                    <button onclick="toggleAnswer('answer17-result')">Show Answer</button>
+                    <div id="answer17-result" class="answer-box">
+                        <strong>Short-term Control Measures:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Human Health:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Treat all cases with appropriate antibiotics</li>
+                                    <li>Continue active case finding</li>
+                                    <li>Community education on symptoms and when to seek care</li>
+                                    <li>Address health facility fears from Marburg outbreak</li>
+                                </ul>
+                            </li>
+                            <li><strong>Animal Health:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Ring vaccination of at-risk livestock</li>
+                                    <li>Proper carcass disposal (no opening, deep burial or incineration)</li>
+                                    <li>Site decontamination with formalin</li>
+                                    <li>Restrict animal movements from affected areas</li>
+                                </ul>
+                            </li>
+                            <li><strong>Food Safety:</strong>
+                                <ul style="margin-left: 20px;">
+                                    <li>Ban slaughter/sale of sick animals</li>
+                                    <li>Education on proper meat cooking (boiling >60 minutes)</li>
+                                    <li>Trace and recall contaminated meat</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <strong style="margin-top: 10px; display: block;">Long-term Control Measures:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li>Routine livestock vaccination programs (government subsidized)</li>
+                            <li>Surveillance systems for animal and human anthrax</li>
+                            <li>Compensation schemes for reported/culled animals</li>
+                            <li>Community education on zoonotic disease risks</li>
+                            <li>Improved coordination between human and animal health sectors (One Health approach)</li>
+                            <li>Training for veterinary and health workers on anthrax recognition</li>
+                            <li>Environmental management of endemic areas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="question-box">
+                    <h4>Question 18: What are some possible cultural and contextual challenges associated with control measures?</h4>
+                    <textarea id="answer18" placeholder="Consider socioeconomic and cultural factors..."></textarea>
+                    <button onclick="toggleAnswer('answer18-result')">Show Answer</button>
+                    <div id="answer18-result" class="answer-box">
+                        <strong>Cultural and Contextual Challenges:</strong>
+                        <ul style="margin-left: 20px;">
+                            <li><strong>Economic dependence:</strong> 85% subsistence farming; cattle are livelihood - difficult to ban slaughter of sick animals</li>
+                            <li><strong>Food security:</strong> Meat from dead animals may be seen as preventing waste in resource-poor setting</li>
+                            <li><strong>Vaccination costs:</strong> No government subsidy; families must pay; group ownership complicates decisions</li>
+                            <li><strong>Traditional practices:</strong> Long-standing butchering and meat preparation customs</li>
+                            <li><strong>Health facility fears:</strong> Recent Marburg outbreak created stigma and fear (quarantine, disinfection, death)</li>
+                            <li><strong>Limited education:</strong> ~33% illiterate - need appropriate communication strategies</li>
+                            <li><strong>Communication challenges:</strong> Radio main source (50%); need culturally appropriate messages</li>
+                            <li><strong>Limited infrastructure:</strong> Road access issues limit rapid response</li>
+                            <li><strong>Cross-border issues:</strong> Kenya border - animals/people move across</li>
+                            <li><strong>Young population:</strong> >50% under 18 - may not make household decisions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button onclick="prevSection()">← Previous</button>
+                    <button onclick="nextSection()">
