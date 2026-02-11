@@ -1,31 +1,32 @@
 {
   "module_id": "FETP_WS2_Anthrax",
   "title": "Anthrax in the Cattle-Keeping Corridor of Uganda: A One Health Case Study",
-  "version": "1.0.0",
-  "source": {
-    "uploaded_file": "questions_answers_notes.md"
+  "version": "1.1.0",
+  "content_paths": {
+    "parts_dir": "content/parts",
+    "appendices_dir": "content/appendices"
   },
   "parts": [
     {
       "part_id": "A",
-      "title": "Background and Initial Investigation"
+      "title": "Part A: Background and Initial Investigation"
     },
     {
       "part_id": "B",
-      "title": "Describing the Data"
+      "title": "Part B: Describing the Data"
     },
     {
       "part_id": "C",
-      "title": "Response"
+      "title": "Part C: Response"
     },
     {
       "part_id": "D",
-      "title": "Conclusion"
+      "title": "Part D: Conclusion"
     }
   ],
   "items": [
     {
-      "id": "Q1",
+      "id": "Question_1",
       "part": "A",
       "type": "short_text",
       "prompt": "Would you call this an outbreak? Why or why not?",
@@ -34,368 +35,193 @@
           "How do you define a disease cluster?",
           "How do you define an outbreak?"
         ],
-        "reference_definitions": {
-          "cluster": "Aggregation of cases in a defined area during a defined time period (without reference to whether the number of cases is more than expected).",
-          "outbreak": "Occurrence of more cases of a disease than expected in a defined area or among a specific group of people over a defined time period."
-        },
-        "model_answer": "The seven patients clearly represent a cluster with similar symptoms and a common exposure. However, we can’t conclude that this is an outbreak, as there is not yet a confirmed diagnosis or other evidence that all patients are suffering from the same illness, nor a complete picture in terms of person, place and time. However, even though an outbreak cannot be confirmed, further investigation seems warranted.",
-        "rubric_keywords": [
-          "cluster",
-          "outbreak",
-          "more than expected",
-          "confirmed diagnosis",
-          "person-place-time",
-          "investigation warranted"
-        ]
+        "model_answer": "The seven patients represent a cluster. However, an outbreak cannot yet be confirmed without confirmed diagnosis and full person-place-time assessment. Further investigation is warranted."
       }
     },
     {
-      "id": "Q2",
+      "id": "Question_2",
       "part": "A",
       "type": "short_text",
-      "prompt": "Keeping in mind that all seven index cases were involved in butchering or eating a cow, which government agencies might be interested in participating in the investigation? What types of staff might be part of a field investigation team?",
-      "instructor_mode": {
-        "reframe_option": "If this cluster occurred in our country, which of our government agencies would be (or should be) interested?",
-        "model_answer": [
-          "Ministry of Health: epidemiologist, laboratory technician, medical officer (clinician), health promotion/health education officer",
-          "Ministry of Agriculture, Animal Industry and Fisheries: veterinary officer/veterinary epidemiologist",
-          "Wildlife Authority: environmental health officer",
-          "Ministry of Water and Environment: environmental health officer",
-          "Local government: District Administrator",
-          "Other possible roles: translators, drivers, IT/computer/data entry staff"
-        ]
-      }
-    },
-    {
-      "id": "Q3a",
-      "part": "A",
-      "type": "short_text",
-      "prompt": "What was the likely source of infection for the human cases?",
-      "instructor_mode": {
-        "group_activity": "Direct participants to work in groups of 3; have half present for 3a.",
-        "model_answer": "Cutaneous anthrax is associated with skin contact with material contaminated with anthrax spores. In this case, handling raw or inadequately cooked meat from the infected cow is the likely cause.",
-        "discussion_points": [
-          "People ate the meat; consider gastrointestinal anthrax cases may have occurred or may occur.",
-          "Pulmonary (inhalational) anthrax cases are also possible depending on exposures.",
-          "Direct human-to-human spread of anthrax is extremely rare."
-        ]
-      }
-    },
-    {
-      "id": "Q3b",
-      "part": "A",
-      "type": "short_text",
-      "prompt": "What was the likely source of infection for the cow?",
-      "instructor_mode": {
-        "group_activity": "Direct participants to work in groups of 3; have remaining groups present for 3b.",
-        "model_answer": "Livestock often become infected by ingestion of anthrax spores from the soil when grazing.",
-        "important_note": "Direct animal-to-animal or human-to-human spread of anthrax is extremely rare."
-      }
-    },
-    {
-      "id": "Q4",
-      "part": "A",
-      "type": "short_text",
-      "prompt": "Which step is missing?",
-      "instructor_mode": {
-        "model_answer": "The missing step is Develop Hypotheses (Step 7). Epidemiologists typically start thinking about possible causes early—often during the first phone call.",
-        "optional_prompts": [
-          {
-            "prompt": "In the context of an outbreak investigation, what is a hypothesis?",
-            "suggested_answer": "An informed guess about the possible cause of disease or mode of transmission."
-          },
-          {
-            "prompt": "How do epidemiologists develop hypotheses for an outbreak?",
-            "suggested_answer": [
-              "Subject matter knowledge (known sources, vehicles, transmission modes)",
-              "Review descriptive epidemiology (what explains most cases?)",
-              "Look at outliers (unique cases with limited overlapping exposures)",
-              "Talk to case-patients (what do they think caused illness?)",
-              "Talk to local health officials (what do they think caused the outbreak?)"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "Q5",
-      "part": "A",
-      "type": "short_text",
-      "prompt": "From a public health perspective, which steps might be approached differently in a zoonotic disease investigation?",
+      "prompt": "Which government agencies might participate in the investigation? What staff might be part of the field team?",
       "instructor_mode": {
         "model_answer": [
-          "Step 1: Broader team should include veterinarians and environmental health officers (depending on disease).",
-          "Step 4: Case definition may need to include both human and animal case definitions.",
-          "Step 5: Case finding may include identifying affected humans and affected animals.",
-          "Step 10: Explanation should reconcile evidence from human and animal investigations.",
-          "Step 11: Control measures may differ for animals vs humans (e.g., culling applies to animals, not humans).",
-          "Step 12: Surveillance may be needed in animal populations not under routine surveillance.",
-          "Step 13: Communication between human and animal investigations is essential for coordination."
+          "Ministry of Health (epidemiologist, lab, clinician, health promotion)",
+          "Ministry of Agriculture (veterinary officer)",
+          "Environmental/Wildlife authorities",
+          "Local government",
+          "Support staff (drivers, translators, data entry)"
         ]
       }
     },
     {
-      "id": "Q6",
+      "id": "Question_3",
       "part": "A",
       "type": "short_text",
-      "prompt": "How does an outbreak case definition differ from a standard surveillance case definition?",
+      "prompt": "Question 3 prompt text.",
       "instructor_mode": {
-        "model_answer": "The clinical component may be the same (or not), but an outbreak case definition also includes time and place/person specifications."
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q7",
+      "id": "Question_4",
       "part": "A",
       "type": "short_text",
-      "prompt": "What are some ways you might look for additional cases (active case finding) among humans?",
+      "prompt": "Question 4 prompt text.",
       "instructor_mode": {
-        "facilitation_format": "Round-robin: ask each participant to offer one strategy; allow 'Pass'.",
-        "model_answer": [
-          "Routine surveillance/notification data (may be limited here)",
-          "Hospital/in-patient data (record review)",
-          "Ask cases about similarly affected family/contacts",
-          "Meetings with community leaders",
-          "Door-to-door surveillance",
-          "Train community health workers to use case definitions",
-          "Health promotion teams or local media to educate on prevention/early detection and encourage care seeking",
-          "Coordinate with animal health response: follow up humans with contact to identified animal cases"
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q8",
+      "id": "Question_5",
       "part": "A",
       "type": "short_text",
-      "prompt": "What are the advantages of using a disease-specific case investigation form as part of active case finding?",
+      "prompt": "Question 5 prompt text.",
       "instructor_mode": {
-        "model_answer": [
-          "Disease-specific and includes important outbreak context",
-          "Standardizes information collected across investigation team members",
-          "Improves quality of information obtained from suspected cases"
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q9",
+      "id": "Question_6",
+      "part": "A",
+      "type": "short_text",
+      "prompt": "Question 6 prompt text.",
+      "instructor_mode": {
+        "model_answer": "See instructor guide."
+      }
+    },
+    {
+      "id": "Question_7",
       "part": "A",
       "type": "discussion",
-      "prompt": "How might information from the animal investigation help the human investigation (and vice versa)?",
+      "prompt": "Question 7 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Discuss as a group.",
-        "model_answer": [
-          "Animal illness/death information can guide where to look for human cases and exposed individuals.",
-          "Laboratory confirmation may be faster in one ministry than the other.",
-          "Accumulating evidence in either investigation can inform the other when the cause is uncertain.",
-          "Interview findings from either team (e.g., beliefs/practices) can inform response activities.",
-          "Information sharing helps coordinate and efficiently control diseases threatening human health."
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q10a",
+      "id": "Question_8",
+      "part": "A",
+      "type": "short_text",
+      "prompt": "Question 8 prompt text.",
+      "instructor_mode": {
+        "model_answer": "See instructor guide."
+      }
+    },
+    {
+      "id": "Question_9",
+      "part": "A",
+      "type": "discussion",
+      "prompt": "Question 9 prompt text.",
+      "instructor_mode": {
+        "model_answer": "See instructor guide."
+      }
+    },
+    {
+      "id": "Question_10a",
       "part": "A",
       "type": "timeline_entry",
-      "prompt": "What key information from 22nd April would you add to the Table 2 timeline?",
+      "prompt": "Question 10a prompt text.",
       "instructor_mode": {
-        "model_answer": "Another cow dies suddenly in the same location as the first cow. Blood samples are collected."
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q10b",
+      "id": "Question_10b",
       "part": "A",
       "type": "timeline_entry",
-      "prompt": "What key information from 23rd–29th April would you add to the Table 2 timeline?",
+      "prompt": "Question 10b prompt text.",
       "instructor_mode": {
-        "model_answer": [
-          "23rd April: Seven cows are found dead on a neighbouring property.",
-          "29th April: Another cow is found dead in Kaplobotwo; cattle samples are PCR-positive for anthrax."
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q10c",
+      "id": "Question_10c",
       "part": "A",
       "type": "timeline_entry",
-      "prompt": "What key information from 30th April would you add to the Table 2 timeline?",
+      "prompt": "Question 10c prompt text.",
       "instructor_mode": {
-        "model_answer": "30th April: 26 human cases have been identified with onset of symptoms after 11th April."
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q11",
+      "id": "Question_11",
       "part": "B",
       "type": "short_text",
-      "prompt": "How would you analyse the data on demographics, clinical symptoms, and exposures?",
+      "prompt": "Question 11 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Could begin by asking components of analysis, then small groups for each component.",
-        "model_answer": {
-          "components": [
-            "Clinical features of cases",
-            "Time",
-            "Place",
-            "Person",
-            "Risk factors"
-          ],
-          "approach": {
-            "clinical_features": "Frequency distribution (n, %) of type of anthrax (cutaneous, GI, pulmonary).",
-            "time": "Epidemic curve.",
-            "place": "Spot map of cases.",
-            "person": "Table of age and sex.",
-            "risk_factors": "Attack rates."
-          }
-        }
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q12",
+      "id": "Question_12",
       "part": "B",
       "type": "annotation",
-      "prompt": "Add arrows to the epidemic curve to indicate the first three events from the Table 2 timeline.",
+      "prompt": "Question 12 prompt text.",
       "instructor_mode": {
-        "model_answer": [
-          "11th April: Dead cow butchered and eaten.",
-          "20th April: First presentations at health centre; notification.",
-          "21st April: Investigative team arrives."
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q13",
+      "id": "Question_13",
       "part": "B",
       "type": "short_text",
-      "prompt": "Interpret the epidemic curve (Figure 2).",
+      "prompt": "Question 13 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Small groups with a timekeeper; reconvene for discussion.",
-        "model_answer_points": [
-          "Describe shape: 8–9 cases on 13th and 14th April, peak on 15th April, sharp decline to 20th April; two late cases on 24th and 25th April.",
-          "Interpretation: rapid increase then gradual decline suggests a point source outbreak.",
-          "Relate to events/incubation: most cases 2–9 days after exposure; consistent with incubation period (typically 1–7 days).",
-          "Is outbreak ongoing? likely over.",
-          "Outliers: late cases could reflect stored meat eaten later or other exposures; in this investigation they reported eating meat from the index cow and not other dead cows."
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q14",
+      "id": "Question_14",
       "part": "B",
       "type": "table_calc",
-      "prompt": "Using the line list data in Appendix 3, calculate attack rates and complete Tables 4a and 4b.",
-      "calculation_type": "attack_rate_by_demographics",
+      "prompt": "Question 14 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Small groups; compare results and resolve calculation errors.",
-        "model_answer": "The numerator is 48 total cases identified so far. The denominator is 234 total village population. Attack rate (incidence proportion) = (new cases / population at risk) × 100.",
-        "notes": [
-          "Complete attack rates by sex and by age group using the line list."
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q15",
+      "id": "Question_15",
       "part": "B",
       "type": "table_calc",
-      "prompt": "Calculate attack rates for exposures possibly associated with cutaneous anthrax, based on the data below.",
-      "calculation_type": "attack_rate_by_exposure",
+      "prompt": "Question 15 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Share results and fill in Table 5; resolve errors as a group.",
-        "notes": [
-          "There is no single right answer on whether to include GI-only cases as non-cases or exclude them; results are similar either way."
-        ],
-        "expected_table_columns": [
-          "Possible exposures",
-          "Case",
-          "Non-case",
-          "Total",
-          "Attack rate"
-        ],
-        "model_answer": "Participants compute attack rates for each exposure row using (cases / total exposed) × 100."
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q16",
+      "id": "Question_16",
       "part": "B",
       "type": "discussion",
-      "prompt": "Why might some livestock owners with sick animals not come forward during an outbreak? How can reporting and compliance be improved?",
+      "prompt": "Question 16 prompt text.",
       "instructor_mode": {
-        "model_answer": {
-          "reasons": [
-            "Fear livelihood impacts: movement restrictions and intervention costs can cause losses.",
-            "Low awareness/understanding of anthrax and need to report.",
-            "Extensive management: deaths may not be observed in large low-density herds."
-          ],
-          "solutions": [
-            "Government-backed funding and compensation schemes to reduce disincentives.",
-            "Build relationships through trusted local representatives.",
-            "Local awareness and training programs for best-practice livestock management."
-          ]
-        }
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q17",
+      "id": "Question_17",
       "part": "C",
       "type": "short_text",
-      "prompt": "Based on the findings of the outbreak investigation, what short-term and longer-term actions and control measures might you undertake?",
+      "prompt": "Question 17 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Split groups: half short/intermediate-term, half longer-term; reconvene to present.",
-        "model_answer": {
-          "short_term": [
-            "Case management for infected humans (antibiotics and follow-up care).",
-            "Offer prophylactic antibiotics for people exposed to suspected cow cases.",
-            "Maintain active case finding in humans for at least two incubation periods (14 days) after last case.",
-            "Appropriate disposal of suspected anthrax carcasses and decontamination of death sites.",
-            "Ensure compensation is available to reduce disincentives to report."
-          ],
-          "long_term": [
-            "Regular coordination meetings between public and animal health investigations.",
-            "Community mobilization/sensitization for prevention and control.",
-            "Strengthen animal health surveillance in endemic regions.",
-            "Vaccinate at-risk livestock to prevent future animal (and human) cases.",
-            "Consider movement/trade restrictions where feasible; note practical constraints in communal/nomadic settings."
-          ]
-        }
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q18",
+      "id": "Question_18",
       "part": "C",
       "type": "discussion",
-      "prompt": "What are some possible cultural and contextual challenges associated with the proposed control measures, and other factors that are important to consider?",
+      "prompt": "Question 18 prompt text.",
       "instructor_mode": {
-        "facilitation_note": "Group discussion or small groups.",
-        "model_answer": [
-          "Cultural perceptions/understanding of illness/death causes in cattle and humans",
-          "Community cooperation and trust in authorities",
-          "Access to health services and quality of care",
-          "Health-seeking behaviors (including preference for traditional healers)",
-          "Availability/supply of antimicrobials, vaccines, and decontamination chemicals",
-          "Potential health risks from decontamination chemicals",
-          "Fear of livelihood implications leading to under-reporting",
-          "Cultural practices/beliefs about carcass disposal",
-          "Resource constraints for coordinated animal response",
-          "Availability of compensation schemes to facilitate compliance",
-          "Difficulty applying movement restrictions in communal/nomadic settings",
-          "Enforcement/compliance challenges without adequate compensation and resources"
-        ]
+        "model_answer": "See instructor guide."
       }
     },
     {
-      "id": "Q19",
+      "id": "Question_19",
       "part": "C",
       "type": "reflection",
-      "prompt": "Considering a One Health approach to outbreak investigation and disease control, what challenges can limit effective multisectoral collaboration?",
+      "prompt": "Question 19 prompt text.",
       "instructor_mode": {
-        "facilitation_notes": [
-          "Final reflective question—lead a group discussion.",
-          "Optionally reorient to participants’ own country context."
-        ],
-        "model_answer": [
-          "Lack of awareness of counterparts in other disciplines",
-          "Lack of routine communication",
-          "Delay in establishing collaboration",
-          "Gaps in knowledge of transmission/control measures across humans and animals",
-          "Lack of guidelines and channels for data/information sharing",
-          "Imbalances in funding/resourcing between public health and animal health agencies"
-        ]
+        "model_answer": "See instructor guide."
       }
     }
   ]
