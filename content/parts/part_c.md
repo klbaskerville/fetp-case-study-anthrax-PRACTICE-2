@@ -8,29 +8,16 @@ Although control measures were initiated throughout the investigation (as soon a
 • Livestock in the affected area were not routinely vaccinated. 
 
 
-## Question 17
+[[Question_17]]
 
 
 Control measures are a vital part of outbreak response and should be implemented as soon as possible. However, it is also important to understand the context when planning, implementing and evaluating control measures. As the investigation progressed, the team learned more about the social and economic context of the outbreak, and how that may impact disease control measures.
 
 
-## Question 18
+[[Question_18]]
 
 
-## Question 19	
-
-
-
-
-
-
-
-
-
-
-
-
-
+[[Question_19]]
 
 
 
