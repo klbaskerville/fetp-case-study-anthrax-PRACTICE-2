@@ -10,7 +10,7 @@ During the cohort study, an additional 22 cases (for a total of 48 cases from Ka
 
 The team sketched out an analysis plan for the data they collected through surveillance, case finding, and the study.
 
-## Question 11
+[[Question_11]]
 
 
 
@@ -22,20 +22,21 @@ The FETP fellow also characterized the outbreak by time, using an epidemic curve
 
 ## Figure 2.  Suspected and confirmed human cases of anthrax (n=48), and sudden deaths of local cattle (n=10), by date of onset/occurrence, Kaplobotwo, April 2018
 
-## Questions 12-13
+[[Question_12]]
+
+[[Question_13]]
 
 ## Table 4a. Attack rates of suspected and confirmed human cases of anthrax by sex, Kaplobotwo, April 2018.
 
 ## Table 4b. Attack rates of suspected and confirmed human cases of anthrax by age group, Kaplobotwo, April 2018.
 
-## Question 14
+[[Question_14]]
 
 The team entered the data from the cohort study (n=141) into a database, then analysed the data to identify possible risk factors for anthrax in humans.
 
 
 
-## Question 15
-
+[[Question_15]]
 
 
 The district veterinary officer and his team traced meat from the implicated cow to buyers in two nearby villages, Tukumo and Rikwo. The RRT then followed up with the buyers and found:
@@ -48,5 +49,4 @@ Meanwhile, accumulating information from the district veterinary officer’s inv
 
 
 
-## Question 16
-
+[[Question_16]]
