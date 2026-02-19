@@ -7,6 +7,16 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+def load_theme():
+    css_path = Path(".streamlit/style.css")
+    if css_path.exists():
+        st.markdown(
+            f"<style>{css_path.read_text(encoding='utf-8')}</style>",
+            unsafe_allow_html=True
+        )
+
+load_theme()
+
 BASE_DIR = Path(__file__).resolve().parent
 CONTENT_DIR = BASE_DIR / "content"
 ITEMS_JSON_PATH = CONTENT_DIR / "items.json"

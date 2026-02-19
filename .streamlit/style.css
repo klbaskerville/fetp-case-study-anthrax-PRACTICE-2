@@ -1,0 +1,111 @@
+:root {
+  --fetp-primary: #0065A4;
+  --fetp-primary-700: #004f82;
+  --fetp-surface: #ffffff;
+  --fetp-bg: #f7f9fb;
+  --fetp-text: #1a1a1a;
+  --fetp-muted: #5a6b7b;
+  --fetp-border: #dbe4ee;
+  --fetp-success: #157f3b;
+}
+
+html,
+body,
+[class*="css"] {
+  font-family: "Inter", "Segoe UI", "Roboto", "Helvetica", sans-serif;
+  color: var(--fetp-text);
+}
+
+.stApp {
+  background: var(--fetp-bg);
+}
+
+.block-container {
+  max-width: 1100px;
+  padding-top: 1.25rem;
+  padding-bottom: 3rem;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--fetp-primary-700);
+  letter-spacing: 0.01em;
+}
+
+.stMarkdown p,
+.stCaption,
+label,
+small {
+  line-height: 1.55;
+}
+
+[data-testid="stSidebar"] {
+  background-color: var(--fetp-surface);
+  border-right: 1px solid var(--fetp-border);
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+  color: var(--fetp-primary);
+}
+
+.stButton > button,
+.stDownloadButton > button {
+  border-radius: 0.6rem;
+  border: 1px solid var(--fetp-primary);
+  background: var(--fetp-primary);
+  color: #fff;
+  font-weight: 600;
+  transition: 0.2s ease-in-out;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+  background: var(--fetp-primary-700);
+  border-color: var(--fetp-primary-700);
+}
+
+.stTextInput > div > div > input,
+.stTextArea textarea,
+.stSelectbox [data-baseweb="select"] > div,
+.stMultiSelect [data-baseweb="select"] > div,
+.stDateInput input {
+  border-radius: 0.55rem;
+  border: 1px solid var(--fetp-border);
+}
+
+[data-testid="stMetric"] {
+  background: var(--fetp-surface);
+  border: 1px solid var(--fetp-border);
+  border-radius: 0.8rem;
+  padding: 0.8rem 1rem;
+}
+
+[data-testid="stExpander"] {
+  border: 1px solid var(--fetp-border);
+  border-radius: 0.75rem;
+  background: var(--fetp-surface);
+}
+
+[data-testid="stAlert"] {
+  border-radius: 0.7rem;
+}
+
+[data-testid="stDataFrame"] {
+  border: 1px solid var(--fetp-border);
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+
+hr {
+  border-color: var(--fetp-border);
+}
+
+@media (max-width: 768px) {
+  .block-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
