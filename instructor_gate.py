@@ -103,8 +103,7 @@ def instructor_gate_ui(
             key=INPUT_KEY,
             placeholder="Enter instructor unlock code",
         )
-        if container.button("Unlock", key=f"unlock_btn_{location}_{label}", use_container_width=True):
-            _unlock_attempt(configured_code)
+        container.button("Unlock", key=f"unlock_btn_{location}_{label}", use_container_width=True, on_click=_unlock_attempt, kwargs={"configured_code": configured_code})
 
         if st.session_state.get(ERROR_KEY):
             container.warning(st.session_state[ERROR_KEY])
