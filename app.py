@@ -7,6 +7,8 @@ from typing import Any
 import pandas as pd
 import streamlit as st
 
+from instructor_gate import instructor_gate_ui, instructor_mode_enabled
+
 def load_theme():
     css_path = Path(".streamlit/style.css")
     if css_path.exists():
@@ -462,7 +464,7 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Learning Controls")
-        instructor_mode_on = st.toggle("Instructor Mode", value=False)
+        instructor_gate_ui(help_text="Use the instructor unlock code to reveal optional facilitator notes.")
 
         nav_mode = st.radio(
             "Navigation mode",
@@ -523,14 +525,14 @@ def main() -> None:
                 st.error(f"Missing markdown file for {selected_section}: {PART_FILES[selected_section].relative_to(BASE_DIR)}")
                 if selected_part_letter in GUIDED_QUESTION_PARTS:
                     for item in part_items[selected_part_letter]:
-                        render_question_card(item, instructor_mode_on)
+                        render_question_card(item, instructor_mode_enabled())
                         st.divider()
             else:
                 st.header(selected_section)
                 render_markdown_with_embedded_questions(
                     markdown_text,
                     items_by_id,
-                    instructor_on=instructor_mode_on,
+                    instructor_on=instructor_mode_enabled(),
                     visible_question_ids=None,
                     active_question_id=st.session_state.get("active_question_id"),
                 )
@@ -561,7 +563,7 @@ def main() -> None:
                 if selected_part_letter in GUIDED_QUESTION_PARTS and current_qid:
                     item = items_by_id.get(current_qid)
                     if item:
-                        render_question_card(item, instructor_mode_on, active=True)
+                        render_question_card(item, instructor_mode_enabled(), active=True)
             else:
                 st.header(current_section)
                 visible: set[str] | None = None
@@ -570,7 +572,7 @@ def main() -> None:
                 render_markdown_with_embedded_questions(
                     md_text,
                     items_by_id,
-                    instructor_on=instructor_mode_on,
+                    instructor_on=instructor_mode_enabled(),
                     visible_question_ids=visible,
                     active_question_id=current_qid,
                 )
@@ -631,7 +633,7 @@ def main() -> None:
             render_markdown_with_embedded_questions(
                 appendix_text,
                 items_by_id,
-                instructor_on=instructor_mode_on,
+                instructor_on=instructor_mode_enabled(),
                 visible_question_ids=None,
                 active_question_id=st.session_state.get("active_question_id"),
             )
