@@ -1,0 +1,15 @@
+[theme]
+base="light"
+
+# Primary interactive: brand blue
+primaryColor="#0065A4"
+
+# Clean training-module background
+backgroundColor="#F7F9FB"
+secondaryBackgroundColor="#FFFFFF"
+
+# High-contrast text for accessibility
+textColor="#1A1A1A"
+
+# Streamlit only supports generic fonts here; we apply Roboto/Nunito via CSS.
+font="sans serif"
