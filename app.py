@@ -1,6 +1,5 @@
 import json
 import re
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -8,11 +7,6 @@ import pandas as pd
 import streamlit as st
 
 from instructor_gate import instructor_gate_ui, instructor_mode_enabled
-
-try:
-    from instructor_gate import is_instructor_unlocked
-except ImportError:  # optional helper
-    is_instructor_unlocked = None
 
 BASE_DIR = Path(__file__).resolve().parent
 CONTENT_DIR = BASE_DIR / "content"
@@ -37,31 +31,109 @@ PART_LETTERS = ["A", "B", "C", "D"]
 PLACEHOLDER_PATTERN = re.compile(r"\[\[([^\[\]]+)\]\]")
 
 
-def load_theme() -> None:
-    css_path = BASE_DIR / ".streamlit" / "style.css"
-    if css_path.exists():
-        st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+def inject_css() -> None:
+    st.markdown(
+        """
+        <style>
+          .stApp {
+            background: radial-gradient(circle at 20% 0%, #eaf2ff 0%, #f7fbff 35%, #f8fafc 100%);
+          }
+          .view-banner {
+            padding: 0.8rem 1rem;
+            border-radius: 0.8rem;
+            border: 1px solid rgba(30, 58, 138, 0.2);
+            background: #eff6ff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+          }
+          .participant-banner {
+            border-color: rgba(100, 116, 139, 0.35);
+            background: #f8fafc;
+          }
+          .main-shell {
+            border-radius: 1rem;
+            border: 1px solid #dbe4ee;
+            background: #ffffffd8;
+            padding: 0.6rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+          }
+          .section-chip {
+            border-radius: 0.6rem;
+            border: 1px solid #d7dee8;
+            padding: 0.35rem 0.55rem;
+            margin-bottom: 0.35rem;
+            background: #ffffff;
+            font-size: 0.9rem;
+          }
+          .section-active {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            font-weight: 700;
+          }
+          .section-complete {
+            background: #ecfdf3;
+            border-color: #86efac;
+          }
+          .question-callout {
+            background: #fffbeb;
+            border-left: 6px solid #f59e0b;
+            border-radius: 0.65rem;
+            padding: 0.65rem 0.8rem;
+            margin-bottom: 0.6rem;
+          }
+          .question-callout.active {
+            box-shadow: 0 0 0 2px #fde68a inset;
+          }
+          .placeholder-hint {
+            color: #92400e;
+            background: #fef3c7;
+            border: 1px dashed #f59e0b;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.6rem;
+            margin: 0.35rem 0;
+            font-size: 0.9rem;
+          }
+          .guide-panel {
+            border-left: 4px solid #64748b;
+            background: #f8fafc;
+            border-radius: 0.65rem;
+            padding: 0.65rem 0.8rem;
+            height: 100%;
+          }
+          .toc-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.7rem;
+            padding: 0.7rem 0.8rem;
+            margin-bottom: 0.8rem;
+          }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def normalize_placeholder_id(raw_id: str) -> str:
-    token = raw_id.strip()
-    token = re.sub(r"\s+", "_", token)
-
-    q_match = re.fullmatch(r"[Qq](\d+[A-Za-z]?)", token)
-    if q_match:
-        return f"Question_{q_match.group(1)}"
-
-    question_match = re.fullmatch(r"[Qq]uestion_(.+)", token)
+    token = re.sub(r"\s+", "_", raw_id.strip())
+    if re.fullmatch(r"[Qq](\d+[A-Za-z]?)", token):
+        return f"Question_{re.sub(r'[Qq]', '', token, count=1)}"
+    question_match = re.fullmatch(r"[Qq]uestion[_ ]?(\d+[A-Za-z]?)", raw_id.strip())
     if question_match:
         return f"Question_{question_match.group(1)}"
-
+    if re.fullmatch(r"Question_\d+[A-Za-z]?", token):
+        return token
     return token
+
+
+def slugify(text: str) -> str:
+    s = re.sub(r"[^a-zA-Z0-9\s-]", "", text).strip().lower()
+    return re.sub(r"[\s_-]+", "-", s)
 
 
 @st.cache_data
 def load_items_json(path: str) -> dict[str, Any]:
-    with Path(path).open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+    with Path(path).open("r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 @st.cache_data
@@ -69,442 +141,392 @@ def load_markdown(path: str) -> str:
     return Path(path).read_text(encoding="utf-8")
 
 
-def validate_items_payload(payload: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
+def init_state() -> None:
+    defaults = {
+        "nav_mode": "Guided (Next/Back)",
+        "guided_idx": 0,
+        "jump_section": "Part 0",
+        "appendix_selection": "Appendix 1",
+        "include_appendices_guided": False,
+        "show_all_questions": False,
+        "active_qid": None,
+    }
+    for key, val in defaults.items():
+        st.session_state.setdefault(key, val)
+
+
+def extract_placeholders(md_text: str) -> list[str]:
+    return [normalize_placeholder_id(m.group(1)) for m in PLACEHOLDER_PATTERN.finditer(md_text)]
+
+
+def question_number(qid: str) -> str:
+    m = re.match(r"Question_(.+)", qid)
+    return m.group(1) if m else qid
+
+
+def is_answered(qid: str) -> bool:
+    resp = st.session_state.get(f"resp_{qid}")
+    done = bool(st.session_state.get(f"done_{qid}", False))
+    computed = st.session_state.get(f"computed_{qid}") is not None
+    if isinstance(resp, str):
+        has_resp = bool(resp.strip())
+    elif isinstance(resp, (list, dict)):
+        has_resp = len(resp) > 0
+    else:
+        has_resp = resp is not None
+    return done or has_resp or computed
+
+
+def response_preview(qid: str) -> str:
+    resp = st.session_state.get(f"resp_{qid}")
+    if resp is None:
+        return ""
+    if isinstance(resp, str):
+        txt = resp.strip()
+        return txt[:120] + ("…" if len(txt) > 120 else "")
+    if isinstance(resp, list):
+        return f"{len(resp)} row(s)"
+    if isinstance(resp, dict):
+        return f"{len(resp)} key(s)"
+    return str(resp)
+
+
+def validate_items(payload: dict[str, Any]) -> list[str]:
+    errors = []
     for key in ["module_id", "title", "items"]:
         if key not in payload:
-            errors.append(f"Missing key in items.json: '{key}'")
-
+            errors.append(f"Missing top-level key: {key}")
     items = payload.get("items")
     if not isinstance(items, list):
-        errors.append("'items' must be a list.")
+        errors.append("items must be a list")
         return errors
-
-    for idx, item in enumerate(items, start=1):
+    for i, item in enumerate(items, start=1):
         if not isinstance(item, dict):
-            errors.append(f"Item #{idx} must be an object.")
+            errors.append(f"Item #{i} is not an object")
             continue
-        for key in ["id", "part", "type", "prompt"]:
-            if key not in item:
-                errors.append(f"Item #{idx} missing required field '{key}'.")
+        for req in ["id", "type", "prompt"]:
+            if req not in item:
+                errors.append(f"Item #{i} missing {req}")
     return errors
 
 
-def extract_placeholders(markdown_text: str) -> list[str]:
-    return [normalize_placeholder_id(match.group(1)) for match in PLACEHOLDER_PATTERN.finditer(markdown_text)]
+def build_part_items(all_items: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    mapping = {letter: [] for letter in PART_LETTERS}
+    for item in all_items:
+        part = str(item.get("part", "")).upper()
+        if part in mapping:
+            mapping[part].append(item)
+    return mapping
 
 
-def is_answered(item_id: str) -> bool:
-    response = st.session_state.get(f"resp_{item_id}")
-    done = bool(st.session_state.get(f"done_{item_id}", False))
-    computed = st.session_state.get(f"computed_{item_id}") is not None
-
-    if isinstance(response, str):
-        has_response = bool(response.strip())
-    elif isinstance(response, (list, dict)):
-        has_response = len(response) > 0
-    else:
-        has_response = response is not None
-
-    return done or has_response or computed
-
-
-def response_preview(item_id: str) -> str:
-    response = st.session_state.get(f"resp_{item_id}")
-    if response is None:
-        return ""
-    if isinstance(response, str):
-        trimmed = response.strip()
-        return (trimmed[:90] + "…") if len(trimmed) > 90 else trimmed
-    if isinstance(response, list):
-        return f"{len(response)} rows"
-    if isinstance(response, dict):
-        return f"{len(response)} keys"
-    return str(response)
+def build_guided_steps(part_placeholders: dict[str, list[str]], include_appendices: bool) -> list[dict[str, str | None]]:
+    steps: list[dict[str, str | None]] = [{"section": "Part 0", "question_id": None}]
+    for part in ["Part A", "Part B", "Part C", "Part D"]:
+        ids = part_placeholders.get(part, [])
+        if ids:
+            for qid in ids:
+                steps.append({"section": part, "question_id": qid})
+        else:
+            steps.append({"section": part, "question_id": None})
+    if include_appendices:
+        for appendix in APPENDIX_FILES:
+            steps.append({"section": appendix, "question_id": None})
+    return steps
 
 
-def render_facilitator_guide(instr: dict[str, Any]) -> None:
-    st.markdown("#### Facilitator Guide")
+def render_facilitator_panel(instr: dict[str, Any]) -> None:
+    st.markdown("<div class='guide-panel'>", unsafe_allow_html=True)
+    st.markdown("#### 📌 Facilitator Guide")
     if not instr:
-        st.caption("No instructor guidance provided for this item.")
+        st.caption("No facilitator guidance for this question.")
+        st.markdown("</div>", unsafe_allow_html=True)
         return
 
     consumed: set[str] = set()
 
-    pre_prompts = instr.get("facilitator_pre_prompts")
-    if pre_prompts:
+    before = instr.get("facilitator_pre_prompts")
+    if before:
         consumed.add("facilitator_pre_prompts")
-        st.markdown("**Before you ask**")
-        for prompt in pre_prompts if isinstance(pre_prompts, list) else [pre_prompts]:
-            st.markdown(f"- {prompt}")
+        st.markdown("**🧠 Before you ask**")
+        values = before if isinstance(before, list) else [before]
+        for v in values:
+            st.markdown(f"- {v}")
 
-    definitions = instr.get("reference_definitions")
-    if definitions:
+    defs = instr.get("reference_definitions")
+    if defs:
         consumed.add("reference_definitions")
-        st.markdown("**Key definitions**")
-        if isinstance(definitions, dict):
-            for key, value in definitions.items():
-                st.markdown(f"- **{key}**: {value}")
-        elif isinstance(definitions, list):
-            for line in definitions:
-                st.markdown(f"- {line}")
+        st.markdown("**🗝️ Key definitions**")
+        if isinstance(defs, dict):
+            for k, v in defs.items():
+                st.markdown(f"- **{k}**: {v}")
+        elif isinstance(defs, list):
+            for entry in defs:
+                st.markdown(f"- {entry}")
         else:
-            st.markdown(f"- {definitions}")
+            st.markdown(str(defs))
 
-    model_answer = instr.get("model_answer")
-    if model_answer:
+    model = instr.get("model_answer")
+    if model:
         consumed.add("model_answer")
-        if isinstance(model_answer, str):
-            st.success(model_answer)
-        else:
-            st.info(json.dumps(model_answer, ensure_ascii=False, indent=2))
+        st.markdown("**✅ Suggested response**")
+        st.success(model if isinstance(model, str) else json.dumps(model, ensure_ascii=False, indent=2))
 
     rubric = instr.get("rubric_keywords")
     if rubric:
         consumed.add("rubric_keywords")
         tags = rubric if isinstance(rubric, list) else [rubric]
-        st.markdown("**Rubric keywords**")
-        st.markdown(" ".join(f"`{tag}`" for tag in tags))
+        st.markdown("**🏷️ Rubric keywords**")
+        st.markdown(" ".join(f"`{t}`" for t in tags))
 
     notes = instr.get("notes")
     if notes:
         consumed.add("notes")
-        st.markdown("**Facilitation notes**")
+        st.markdown("**📝 Facilitation notes**")
         if isinstance(notes, list):
-            st.markdown("\n\n".join(str(n) for n in notes))
+            for n in notes:
+                st.markdown(str(n))
         else:
-            st.markdown(str(notes))
+            st.markdown(str(notes).replace("\n", "  \n"))
 
-    extras = {k: v for k, v in instr.items() if k not in consumed}
-    if extras:
+    extra = {k: v for k, v in instr.items() if k not in consumed}
+    if extra:
         with st.expander("More instructor content", expanded=False):
-            for key, value in extras.items():
-                st.markdown(f"**{key.replace('_', ' ').title()}**")
-                if isinstance(value, dict):
-                    st.json(value)
-                elif isinstance(value, list):
-                    for row in value:
-                        st.markdown(f"- {row}")
+            for k, v in extra.items():
+                st.markdown(f"**{k.replace('_', ' ').title()}**")
+                if isinstance(v, (dict, list)):
+                    st.write(v)
                 else:
-                    st.markdown(str(value))
+                    st.markdown(str(v))
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
-def render_response_widget(item: dict[str, Any]) -> None:
-    item_id = item["id"]
-    item_type = item.get("type", "short_text")
+def render_input_widget(item: dict[str, Any]) -> None:
+    qid = item["id"]
+    qtype = item.get("type", "short_text")
+    resp_key = f"resp_{qid}"
+    done_key = f"done_{qid}"
+    comp_key = f"computed_{qid}"
 
-    response_key = f"resp_{item_id}"
-    done_key = f"done_{item_id}"
-    computed_key = f"computed_{item_id}"
-
-    if item_type in {"short_text", "discussion", "reflection", "annotation"}:
-        st.session_state[response_key] = st.text_area(
+    if qtype in {"short_text", "discussion", "reflection", "annotation"}:
+        st.session_state[resp_key] = st.text_area(
             "Your response",
-            key=f"input_{item_id}",
-            value=st.session_state.get(response_key, ""),
+            value=st.session_state.get(resp_key, ""),
+            key=f"text_{qid}",
             height=130,
         )
-        st.session_state[done_key] = st.checkbox(
-            "Mark as complete",
-            key=f"check_{item_id}",
-            value=bool(st.session_state.get(done_key, False)),
-        )
-    elif item_type == "timeline_entry":
-        st.session_state[response_key] = st.text_input(
+    elif qtype == "timeline_entry":
+        st.session_state[resp_key] = st.text_input(
             "Timeline entry",
-            key=f"input_{item_id}",
-            value=st.session_state.get(response_key, ""),
+            value=st.session_state.get(resp_key, ""),
+            key=f"timeline_{qid}",
         )
-        st.session_state[done_key] = st.checkbox(
-            "Mark as complete",
-            key=f"check_{item_id}",
-            value=bool(st.session_state.get(done_key, False)),
-        )
-    elif item_type == "table_calc":
-        starter = pd.DataFrame({"Metric": ["", "", ""], "Value": [0.0, 0.0, 0.0], "Notes": ["", "", ""]})
-        table_key = f"editor_{item_id}"
-        if table_key not in st.session_state:
-            st.session_state[table_key] = starter
-
-        edited = st.data_editor(
-            st.session_state[table_key],
-            key=f"table_{item_id}",
-            num_rows="dynamic",
-            use_container_width=True,
-        )
-        st.session_state[table_key] = edited
-        st.session_state[response_key] = edited.to_dict(orient="records")
-
-        if st.button("Compute", key=f"compute_btn_{item_id}"):
+    elif qtype == "table_calc":
+        df_key = f"editor_{qid}"
+        if df_key not in st.session_state:
+            st.session_state[df_key] = pd.DataFrame(
+                {"Metric": ["", "", ""], "Value": [0.0, 0.0, 0.0], "Notes": ["", "", ""]}
+            )
+        edited = st.data_editor(st.session_state[df_key], key=f"table_{qid}", num_rows="dynamic", use_container_width=True)
+        st.session_state[df_key] = edited
+        st.session_state[resp_key] = edited.to_dict(orient="records")
+        if st.button("Compute", key=f"compute_{qid}"):
             numeric = edited.select_dtypes(include="number")
-            st.session_state[computed_key] = {
+            st.session_state[comp_key] = {
                 "rows": int(len(edited)),
-                "numeric_column_totals": {col: float(numeric[col].fillna(0).sum()) for col in numeric.columns},
+                "numeric_column_totals": {c: float(numeric[c].fillna(0).sum()) for c in numeric.columns},
             }
-        if st.session_state.get(computed_key) is not None:
-            st.info(f"Computed result: {st.session_state[computed_key]}")
+        if st.session_state.get(comp_key) is not None:
+            st.info(f"Computed: {st.session_state[comp_key]}")
     else:
-        st.session_state[response_key] = st.text_area(
+        st.session_state[resp_key] = st.text_area(
             "Your response",
-            key=f"input_{item_id}",
-            value=st.session_state.get(response_key, ""),
+            value=st.session_state.get(resp_key, ""),
+            key=f"fallback_{qid}",
             height=130,
         )
 
+    st.session_state[done_key] = st.checkbox("Mark as complete", key=f"donebox_{qid}", value=bool(st.session_state.get(done_key, False)))
 
-def render_question_card(item: dict[str, Any], instructor_on: bool, active: bool = False) -> None:
-    item_id = item["id"]
-    status_icon = "✅" if is_answered(item_id) else "⏳"
-    subtitle = " (current step)" if active else ""
 
+def render_question(item: dict[str, Any], instructor_on: bool, active: bool = False) -> None:
+    qid = item["id"]
+    state_icon = "✅" if is_answered(qid) else "⏳"
+    active_cls = " active" if active else ""
     with st.container(border=True):
-        st.markdown(f"### {status_icon} {item_id}{subtitle}")
+        st.markdown(
+            f"<div class='question-callout{active_cls}'><strong>⚠️ Question {question_number(qid)}</strong> "
+            f"<span style='opacity:0.8'>({state_icon})</span></div>",
+            unsafe_allow_html=True,
+        )
         if instructor_on:
-            left, right = st.columns([1.35, 1])
+            left, right = st.columns([1.35, 1], vertical_alignment="top")
             with left:
                 st.markdown(item.get("prompt", ""))
-                render_response_widget(item)
+                render_input_widget(item)
             with right:
-                with st.container(border=True):
-                    render_facilitator_guide(item.get("instructor_mode", {}))
+                render_facilitator_panel(item.get("instructor_mode", {}))
         else:
             st.markdown(item.get("prompt", ""))
-            render_response_widget(item)
+            render_input_widget(item)
 
 
-def render_markdown_with_embedded_questions(
-    markdown_text: str,
+def render_embedded_markdown(
+    md_text: str,
     items_by_id: dict[str, dict[str, Any]],
     instructor_on: bool,
-    visible_question_ids: set[str] | None,
-    active_question_id: str | None,
+    visible_qids: set[str] | None,
+    active_qid: str | None,
 ) -> None:
-    last_end = 0
-    for match in PLACEHOLDER_PATTERN.finditer(markdown_text):
-        narrative = markdown_text[last_end:match.start()]
+    last = 0
+    for match in PLACEHOLDER_PATTERN.finditer(md_text):
+        narrative = md_text[last:match.start()]
         if narrative.strip():
             st.markdown(narrative)
 
-        qid = normalize_placeholder_id(match.group(1))
+        raw_id = match.group(1)
+        qid = normalize_placeholder_id(raw_id)
         item = items_by_id.get(qid)
-        if item is None:
-            st.warning(f"Placeholder '{qid}' was found in markdown but not in items.json.")
-        elif visible_question_ids is not None and qid not in visible_question_ids:
-            pass
-        else:
-            render_question_card(item, instructor_on=instructor_on, active=(qid == active_question_id))
-        last_end = match.end()
 
-    tail = markdown_text[last_end:]
+        if item is None:
+            st.warning(f"Placeholder '{qid}' found in markdown but missing in items.json.")
+        elif visible_qids is not None and qid not in visible_qids:
+            st.markdown("<div class='placeholder-hint'>Continue with Next…</div>", unsafe_allow_html=True)
+        else:
+            render_question(item, instructor_on=instructor_on, active=(qid == active_qid))
+
+        last = match.end()
+
+    tail = md_text[last:]
     if tail.strip():
         st.markdown(tail)
 
 
-def build_guided_steps(part_placeholder_order: dict[str, list[str]], include_appendices: bool) -> list[dict[str, str | None]]:
-    steps: list[dict[str, str | None]] = [{"section": "Part 0", "question_id": None}]
-    for section in ["Part A", "Part B", "Part C", "Part D"]:
-        placeholders = part_placeholder_order.get(section, [])
-        if placeholders:
-            for qid in placeholders:
-                steps.append({"section": section, "question_id": qid})
-        else:
-            steps.append({"section": section, "question_id": None})
-
-    if include_appendices:
-        for appendix in APPENDIX_FILES:
-            steps.append({"section": appendix, "question_id": None})
-
-    return steps
-
-
-def build_export_payload(
-    items_payload: dict[str, Any],
-    item_ids: list[str],
-    mode: str,
-    current_section: str,
-    answered_count: int,
-    total_count: int,
-) -> dict[str, Any]:
-    responses = {item_id: st.session_state.get(f"resp_{item_id}") for item_id in item_ids}
-    computed_results = {
-        item_id: st.session_state.get(f"computed_{item_id}")
-        for item_id in item_ids
-        if st.session_state.get(f"computed_{item_id}") is not None
-    }
-    percent = (answered_count / total_count * 100) if total_count else 0.0
-    return {
-        "module_id": items_payload.get("module_id"),
-        "title": items_payload.get("title"),
-        "version": items_payload.get("version"),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "mode": mode,
-        "current_section": current_section,
-        "responses": responses,
-        "computed_results": computed_results,
-        "completion_summary": {
-            "answered_count": answered_count,
-            "total_count": total_count,
-            "percent_complete": round(percent, 1),
-        },
-    }
+def render_front_matter_toc(items_payload: dict[str, Any]) -> None:
+    st.markdown("<div class='toc-box'>", unsafe_allow_html=True)
+    st.markdown("**Front Matter Navigation**")
+    listed_parts = items_payload.get("parts")
+    if isinstance(listed_parts, list) and listed_parts:
+        for part in listed_parts:
+            label = f"Part {part.get('part_id', '').strip()} — {part.get('title', '').strip()}"
+            st.markdown(f"- [{label}](#{slugify(label)})")
+    else:
+        for p in PART_ORDER:
+            st.markdown(f"- [{p}](#{slugify(p)})")
+    for appendix in APPENDIX_FILES:
+        st.markdown(f"- [{appendix}](#{slugify(appendix)})")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
-def reset_responses(item_ids: list[str]) -> None:
-    for item_id in item_ids:
-        for key in [
-            f"resp_{item_id}",
-            f"done_{item_id}",
-            f"computed_{item_id}",
-            f"editor_{item_id}",
-            f"input_{item_id}",
-            f"check_{item_id}",
-            f"table_{item_id}",
-            f"compute_btn_{item_id}",
-        ]:
-            st.session_state.pop(key, None)
+def section_complete(section: str, part_items: dict[str, list[dict[str, Any]]]) -> bool:
+    if not section.startswith("Part ") or section == "Part 0":
+        return False
+    letter = section.split(" ")[-1]
+    items = part_items.get(letter, [])
+    return bool(items) and all(is_answered(it["id"]) for it in items)
 
 
-def init_state() -> None:
-    defaults: dict[str, Any] = {
-        "nav_mode": "Guided (Next/Back)",
-        "guided_index": 0,
-        "jump_section": "Part 0",
-        "appendix_selection": "Appendix 1",
-        "include_appendices_guided": False,
-        "show_full_part": False,
-        "active_question_id": None,
-    }
-    for key, value in defaults.items():
-        if key not in st.session_state:
-            st.session_state[key] = value
+def jump_to_question(qid: str, nav_mode: str, guided_steps: list[dict[str, str | None]], items_by_id: dict[str, dict[str, Any]]) -> None:
+    st.session_state["active_qid"] = qid
+    if nav_mode == "Guided (Next/Back)":
+        for idx, step in enumerate(guided_steps):
+            if step.get("question_id") == qid:
+                st.session_state["guided_idx"] = idx
+                break
+    else:
+        part = str(items_by_id.get(qid, {}).get("part", "")).upper()
+        st.session_state["jump_section"] = f"Part {part}" if part in PART_LETTERS else "Part 0"
 
 
 def main() -> None:
     st.set_page_config(page_title="Anthrax Case Study", layout="wide")
-    load_theme()
+    inject_css()
     init_state()
 
     try:
         items_payload = load_items_json(str(ITEMS_JSON_PATH))
     except FileNotFoundError:
-        st.error("Required file missing: content/items.json")
+        st.error("Missing required file: content/items.json")
         st.stop()
-    except json.JSONDecodeError as err:
-        st.error(f"Invalid JSON in content/items.json: {err}")
+    except json.JSONDecodeError as exc:
+        st.error(f"Invalid JSON in content/items.json: {exc}")
         st.stop()
 
-    errors = validate_items_payload(items_payload)
-    if errors:
-        st.error("items.json is invalid.")
-        for err in errors:
-            st.markdown(f"- {err}")
+    issues = validate_items(items_payload)
+    if issues:
+        st.error("items.json failed validation")
+        for issue in issues:
+            st.write(f"- {issue}")
         st.stop()
 
     all_items: list[dict[str, Any]] = items_payload["items"]
     items_by_id = {item["id"]: item for item in all_items}
-    item_ids = [item["id"] for item in all_items]
-
-    part_items: dict[str, list[dict[str, Any]]] = {letter: [] for letter in PART_LETTERS}
-    for item in all_items:
-        part = str(item.get("part", "")).upper()
-        if part in part_items:
-            part_items[part].append(item)
+    part_items = build_part_items(all_items)
 
     part_markdown: dict[str, str | None] = {}
-    part_placeholder_order: dict[str, list[str]] = {}
-    for part_name, path in PART_FILES.items():
+    part_placeholders: dict[str, list[str]] = {}
+    for section, path in PART_FILES.items():
         try:
-            content = load_markdown(str(path))
-            part_markdown[part_name] = content
-            part_placeholder_order[part_name] = extract_placeholders(content)
+            text = load_markdown(str(path))
+            part_markdown[section] = text
+            part_placeholders[section] = extract_placeholders(text)
         except FileNotFoundError:
-            part_markdown[part_name] = None
-            part_placeholder_order[part_name] = []
+            part_markdown[section] = None
+            part_placeholders[section] = []
 
     appendix_markdown: dict[str, str | None] = {}
-    for appendix_name, path in APPENDIX_FILES.items():
+    for appendix, path in APPENDIX_FILES.items():
         try:
-            appendix_markdown[appendix_name] = load_markdown(str(path))
+            appendix_markdown[appendix] = load_markdown(str(path))
         except FileNotFoundError:
-            appendix_markdown[appendix_name] = None
+            appendix_markdown[appendix] = None
 
-    guided_steps = build_guided_steps(part_placeholder_order, st.session_state["include_appendices_guided"])
-    max_index = max(len(guided_steps) - 1, 0)
-    st.session_state["guided_index"] = min(st.session_state["guided_index"], max_index)
+    guided_steps = build_guided_steps(part_placeholders, st.session_state["include_appendices_guided"])
+    st.session_state["guided_idx"] = min(st.session_state["guided_idx"], max(0, len(guided_steps) - 1))
 
-    answered_count = sum(1 for letter in PART_LETTERS for item in part_items[letter] if is_answered(item["id"]))
-    total_count = sum(len(part_items[letter]) for letter in PART_LETTERS)
-    percent = (answered_count / total_count * 100) if total_count else 0.0
+    total = sum(len(part_items[l]) for l in PART_LETTERS)
+    answered = sum(1 for l in PART_LETTERS for item in part_items[l] if is_answered(item["id"]))
+    pct = answered / total if total else 0.0
 
-    st.title(items_payload.get("title", "Case Study"))
+    st.markdown("<div class='main-shell'>", unsafe_allow_html=True)
+    st.title(items_payload.get("title", "Anthrax Case Study"))
     if instructor_mode_enabled():
-        st.info("🔓 Instructor View")
+        st.markdown("<div class='view-banner'>🔓 Instructor View</div>", unsafe_allow_html=True)
     else:
-        st.caption("🔒 Participant View")
+        st.markdown("<div class='view-banner participant-banner'>🔒 Participant View</div>", unsafe_allow_html=True)
 
     with st.sidebar:
-        instructor_gate_ui(help_text="Unlock instructor mode to reveal facilitator guide content.")
-        if is_instructor_unlocked is not None:
-            st.caption("Instructor gate: unlocked" if is_instructor_unlocked() else "Instructor gate: locked")
-
+        instructor_gate_ui(help_text="Unlock instructor mode to view facilitator guidance.")
         st.session_state["nav_mode"] = st.radio(
-            "Navigation mode",
-            options=["Guided (Next/Back)", "Jump to Section"],
+            "Navigation",
+            ["Guided (Next/Back)", "Jump to Section"],
             index=0 if st.session_state["nav_mode"] == "Guided (Next/Back)" else 1,
         )
-
         if st.session_state["nav_mode"] == "Guided (Next/Back)":
             st.session_state["include_appendices_guided"] = st.checkbox(
                 "Include appendices in guided flow",
                 value=bool(st.session_state["include_appendices_guided"]),
             )
-            st.session_state["show_full_part"] = st.checkbox(
-                "Show full part (all questions)",
-                value=bool(st.session_state["show_full_part"]),
+            st.session_state["show_all_questions"] = st.checkbox(
+                "Show all questions in this part",
+                value=bool(st.session_state["show_all_questions"]),
             )
 
-        current_section = guided_steps[st.session_state["guided_index"]]["section"] if st.session_state["nav_mode"] == "Guided (Next/Back)" else st.session_state["jump_section"]
-        current_part_placeholders = part_placeholder_order.get(current_section, []) if current_section in PART_FILES else []
-
-        if instructor_mode_enabled() and current_part_placeholders:
-            jump_qid = st.selectbox(
-                "Facilitator Quick Jump",
-                options=["--"] + current_part_placeholders,
-                index=0,
-                key="facilitator_quick_jump",
-            )
-            if jump_qid != "--":
-                st.session_state["active_question_id"] = jump_qid
-                if st.session_state["nav_mode"] == "Guided (Next/Back)":
-                    for idx, step in enumerate(guided_steps):
-                        if step["question_id"] == jump_qid:
-                            st.session_state["guided_index"] = idx
-                            break
-                else:
-                    part = items_by_id.get(jump_qid, {}).get("part", "").upper()
-                    if part in PART_LETTERS:
-                        st.session_state["jump_section"] = f"Part {part}"
-                st.rerun()
-
-        if st.button("Reset responses", use_container_width=True):
-            reset_responses(item_ids)
-            st.rerun()
-
-        export_payload = build_export_payload(
-            items_payload,
-            item_ids,
-            "guided" if st.session_state["nav_mode"] == "Guided (Next/Back)" else "jump",
-            current_section,
-            answered_count,
-            total_count,
+        st.markdown("### Sections")
+        active_section = (
+            guided_steps[st.session_state["guided_idx"]]["section"]
+            if st.session_state["nav_mode"] == "Guided (Next/Back)"
+            else st.session_state["jump_section"]
         )
-        st.download_button(
-            "Download responses (JSON)",
-            data=json.dumps(export_payload, ensure_ascii=False, indent=2),
-            file_name="anthrax_case_study_responses.json",
-            mime="application/json",
-            use_container_width=True,
-        )
+        for section in PART_ORDER:
+            classes = ["section-chip"]
+            icon = "✅" if section_complete(section, part_items) else "⏳"
+            if section == "Part 0":
+                icon = "📖"
+            if section == active_section:
+                classes.append("section-active")
+            if section_complete(section, part_items):
+                classes.append("section-complete")
+            st.markdown(f"<div class='{' '.join(classes)}'>{icon} {section}</div>", unsafe_allow_html=True)
 
         if st.button("Reload content (clear cache)", use_container_width=True):
             st.cache_data.clear()
@@ -513,127 +535,95 @@ def main() -> None:
     learn_tab, review_tab, appendices_tab = st.tabs(["Learn & Respond", "Review Answers", "Appendices"])
 
     with learn_tab:
-        st.progress(percent / 100 if total_count else 0.0, text=f"Progress (Parts A–D): {percent:.1f}%")
+        st.progress(pct, text=f"Progress (Parts A–D): {answered}/{total}")
 
         if st.session_state["nav_mode"] == "Jump to Section":
-            section = st.selectbox("Choose section", PART_ORDER, key="jump_section")
-            markdown_text = part_markdown.get(section)
+            section = st.selectbox("Jump to section", PART_ORDER, key="jump_section")
+            md = part_markdown.get(section)
+            if section == "Part 0":
+                render_front_matter_toc(items_payload)
 
-            if markdown_text is None:
-                st.error(f"Missing markdown file for {section}: {PART_FILES[section].relative_to(BASE_DIR)}")
-                part_letter = section.split(" ")[-1] if section != "Part 0" else ""
-                if part_letter in PART_LETTERS:
-                    for item in part_items[part_letter]:
-                        render_question_card(item, instructor_on=instructor_mode_enabled(), active=item["id"] == st.session_state.get("active_question_id"))
+            if md is None:
+                st.error(f"Missing markdown for {section}: {PART_FILES[section].relative_to(BASE_DIR)}")
+                letter = section.split(" ")[-1]
+                for item in part_items.get(letter, []):
+                    render_question(item, instructor_mode_enabled(), active=(item["id"] == st.session_state.get("active_qid")))
             else:
-                render_markdown_with_embedded_questions(
-                    markdown_text=markdown_text,
-                    items_by_id=items_by_id,
-                    instructor_on=instructor_mode_enabled(),
-                    visible_question_ids=None,
-                    active_question_id=st.session_state.get("active_question_id"),
-                )
+                render_embedded_markdown(md, items_by_id, instructor_mode_enabled(), None, st.session_state.get("active_qid"))
+
         else:
-            guided_steps = build_guided_steps(part_placeholder_order, st.session_state["include_appendices_guided"])
-            max_index = max(len(guided_steps) - 1, 0)
-            st.session_state["guided_index"] = min(st.session_state["guided_index"], max_index)
-            step = guided_steps[st.session_state["guided_index"]]
-            section = step["section"]
-            current_qid = step["question_id"]
-            st.session_state["active_question_id"] = current_qid
+            guided_steps = build_guided_steps(part_placeholders, st.session_state["include_appendices_guided"])
+            max_idx = max(0, len(guided_steps) - 1)
+            st.session_state["guided_idx"] = min(st.session_state["guided_idx"], max_idx)
+            step = guided_steps[st.session_state["guided_idx"]]
+            section = str(step["section"])
+            current_qid = step.get("question_id")
+            st.session_state["active_qid"] = current_qid
 
-            md_text = part_markdown.get(section) if section in PART_FILES else appendix_markdown.get(section)
-            missing_ref = PART_FILES.get(section, APPENDIX_FILES.get(section))
+            if section == "Part 0":
+                render_front_matter_toc(items_payload)
 
-            if md_text is None:
-                st.error(f"Missing markdown file for {section}: {missing_ref.relative_to(BASE_DIR)}")
+            md = part_markdown.get(section) if section in PART_FILES else appendix_markdown.get(section)
+            missing_path = PART_FILES.get(section, APPENDIX_FILES.get(section))
+
+            if md is None:
+                st.error(f"Missing markdown for {section}: {missing_path.relative_to(BASE_DIR)}")
                 if section.startswith("Part ") and section != "Part 0":
-                    part_letter = section.split(" ")[-1]
-                    for item in part_items.get(part_letter, []):
-                        if st.session_state["show_full_part"] or item["id"] == current_qid:
-                            render_question_card(item, instructor_on=instructor_mode_enabled(), active=item["id"] == current_qid)
+                    letter = section.split(" ")[-1]
+                    for item in part_items.get(letter, []):
+                        if st.session_state["show_all_questions"] or item["id"] == current_qid:
+                            render_question(item, instructor_mode_enabled(), active=(item["id"] == current_qid))
             else:
-                visible_ids = None
-                if current_qid and not st.session_state["show_full_part"]:
-                    visible_ids = {current_qid}
-                render_markdown_with_embedded_questions(
-                    markdown_text=md_text,
-                    items_by_id=items_by_id,
-                    instructor_on=instructor_mode_enabled(),
-                    visible_question_ids=visible_ids,
-                    active_question_id=current_qid,
-                )
+                visible_qids = None
+                if section.startswith("Part ") and section != "Part 0" and current_qid and not st.session_state["show_all_questions"]:
+                    visible_qids = {current_qid}
+                render_embedded_markdown(md, items_by_id, instructor_mode_enabled(), visible_qids, current_qid)
 
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                if st.button("⬅️ Back", use_container_width=True, disabled=st.session_state["guided_index"] <= 0):
-                    st.session_state["guided_index"] = max(0, st.session_state["guided_index"] - 1)
+            c1, c2, c3 = st.columns([1, 1, 1])
+            with c1:
+                if st.button("⬅️ Previous", disabled=st.session_state["guided_idx"] <= 0, use_container_width=True):
+                    st.session_state["guided_idx"] = max(0, st.session_state["guided_idx"] - 1)
                     st.rerun()
-            with col3:
-                if st.button("Next ➡️", use_container_width=True, disabled=st.session_state["guided_index"] >= max_index):
-                    st.session_state["guided_index"] = min(max_index, st.session_state["guided_index"] + 1)
+            with c2:
+                st.markdown(
+                    f"<div style='text-align:center;padding-top:0.45rem;font-weight:600;'>Step {st.session_state['guided_idx'] + 1} / {len(guided_steps)}</div>",
+                    unsafe_allow_html=True,
+                )
+            with c3:
+                if st.button("Next ➡️", disabled=st.session_state["guided_idx"] >= max_idx, use_container_width=True):
+                    st.session_state["guided_idx"] = min(max_idx, st.session_state["guided_idx"] + 1)
                     st.rerun()
 
     with review_tab:
-        rows = []
-        for item in all_items:
-            qid = item["id"]
-            rows.append(
-                {
-                    "item_id": qid,
-                    "status": "✅" if is_answered(qid) else "⏳",
-                    "preview": response_preview(qid) or "No response yet",
-                }
-            )
-
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-
+        st.subheader("Review Answers")
         for item in all_items:
             qid = item["id"]
             with st.container(border=True):
-                c1, c2, c3 = st.columns([1.3, 4, 1])
+                c1, c2, c3, c4 = st.columns([1.6, 4, 1, 1.4])
                 c1.markdown(f"**{qid}**")
-                c1.caption("Answered" if is_answered(qid) else "Pending")
+                c1.caption("✅ answered" if is_answered(qid) else "⏳ pending")
                 c2.caption(response_preview(qid) or "No response yet")
-                if c3.button("Go", key=f"review_go_{qid}"):
-                    part = str(item.get("part", "")).upper()
-                    target = f"Part {part}" if part in PART_LETTERS else "Part 0"
-                    st.session_state["active_question_id"] = qid
-                    if st.session_state["nav_mode"] == "Guided (Next/Back)":
-                        guided_steps = build_guided_steps(part_placeholder_order, st.session_state["include_appendices_guided"])
-                        for idx, gstep in enumerate(guided_steps):
-                            if gstep["question_id"] == qid:
-                                st.session_state["guided_index"] = idx
-                                break
-                    else:
-                        st.session_state["jump_section"] = target
+                if c3.button("Go", key=f"go_{qid}"):
+                    jump_to_question(qid, st.session_state["nav_mode"], guided_steps, items_by_id)
                     st.rerun()
-
                 if instructor_mode_enabled():
-                    model = item.get("instructor_mode", {}).get("model_answer")
-                    if st.button("Show model answer", key=f"model_{qid}"):
+                    if c4.button("Show model answer", key=f"model_{qid}"):
+                        model = item.get("instructor_mode", {}).get("model_answer")
                         if model:
-                            with st.expander(f"Model answer: {qid}", expanded=True):
-                                if isinstance(model, str):
-                                    st.success(model)
-                                else:
-                                    st.info(json.dumps(model, ensure_ascii=False, indent=2))
+                            st.info("Suggested response")
+                            st.success(model if isinstance(model, str) else json.dumps(model, ensure_ascii=False, indent=2))
                         else:
                             st.caption("No model answer provided.")
 
     with appendices_tab:
-        appendix_choice = st.selectbox("Select appendix", list(APPENDIX_FILES.keys()), key="appendix_selection")
-        appendix_text = appendix_markdown.get(appendix_choice)
-        if appendix_text is None:
-            st.error(f"Missing markdown file for {appendix_choice}: {APPENDIX_FILES[appendix_choice].relative_to(BASE_DIR)}")
+        appendix = st.selectbox("Select appendix", list(APPENDIX_FILES.keys()), key="appendix_selection")
+        text = appendix_markdown.get(appendix)
+        if text is None:
+            st.error(f"Missing markdown for {appendix}: {APPENDIX_FILES[appendix].relative_to(BASE_DIR)}")
         else:
-            render_markdown_with_embedded_questions(
-                markdown_text=appendix_text,
-                items_by_id=items_by_id,
-                instructor_on=instructor_mode_enabled(),
-                visible_question_ids=None,
-                active_question_id=st.session_state.get("active_question_id"),
-            )
+            render_embedded_markdown(text, items_by_id, instructor_mode_enabled(), None, st.session_state.get("active_qid"))
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
